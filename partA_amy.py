@@ -41,7 +41,7 @@ def is_valid_pos(board, locations, piece, move):
 		piece:			 The location of the current piece
 		move:			The direction you want to move in (as a (0,1) tuple)
 """
-		move_i = move[0]
+	move_i = move[0]
 	move_j = move[1]
 
 	piece_i = piece[0]
