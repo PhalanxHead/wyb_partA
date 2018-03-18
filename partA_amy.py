@@ -99,9 +99,54 @@ def moves(board, locations):
 
 	return possible_moves
 
+"""Check if any black pieces are surrounded on the board by the white pieces
+	that we moved and hence need to be removed from the board, this also updates
+	the black pieces that are alive"""
+def check_state(board, black):
+	alive = black
+	state = board
+
+	for piece in alive:
+		piece_i = piece[0]
+		piece_j = piece[1]
+
+		if piece_i = 0 or piece_i = 7:
+			if (state[piece_i][piece_j + 1] == "O") and (state[piece_i][piece_j - 1] == "O") // 
+			or (state[piece_i][piece_j + 1] == "O") and (state[piece_i][piece_j - 1] == "X") //
+			or (state[piece_i][piece_j + 1] == "X") and (state[piece_i][piece_j - 1] == "O"):
+
+				alive.remove(piece)
+				state[piece_i][piece_j] = "-"
+
+		elif piece_j = 0 or piece_j = 7:
+			if (state[piece_i + 1][piece_j] == "O") and (state[piece_i - 1][piece_j] == "O") //
+			or (state[piece_i + 1][piece_j] == "X") and (state[piece_i - 1][piece_j] == "O") //
+			or (state[piece_i + 1][piece_j] == "O") and (state[piece_i - 1][piece_j] == "X"):
+				
+				alive.remove(piece)
+				state[piece_i][piece_j] = "-"
+
+		else:
+			if (state[piece_i][piece_j + 1] == "O") and (state[piece_i][piece_j - 1] == "O") //
+			or (state[piece_i + 1][piece_j] == "O") and (state[piece_i - 1][piece_j] == "O"):
+				
+				alive.remove(piece)
+				state[piece_i][piece_j] = "-"
+
+	return alive, state 
+
 def massacre(board, black, white):
 	sequence = []
+	state = board
+	alive_pieces = black
+	white_location = white
 
+	while alive_pieces:
+		#generate a list of valid moves for white
+		#choose move with minimum manhatten distance 
+		#generate a list of position that white should reach in order to eliminate black pieces
+
+		alive_pieces, state = check_state(board, black)
 
 
 
