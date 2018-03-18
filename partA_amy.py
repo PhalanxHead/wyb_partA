@@ -32,7 +32,7 @@ def locations(board, player):
 	return location_array
 
 def is_valid_pos(board, locations, piece, move):
-"""
+	"""
 	Returns True if move is valid.
 	_____________________
 	Input Vars:
@@ -40,8 +40,8 @@ def is_valid_pos(board, locations, piece, move):
 		locations: 	  The list of piece locations
 		piece:			 The location of the current piece
 		move:			The direction you want to move in (as a (0,1) tuple)
-"""
-		move_i = move[0]
+	"""
+	move_i = move[0]
 	move_j = move[1]
 
 	piece_i = piece[0]
@@ -133,7 +133,7 @@ if command.lower() == "moves":
 	white_moves = moves(board_as_array, white_locations)
 	black_moves = moves(board_as_array, black_locations)
 	print(str(len(white_moves)) + "\n" + str(len(black_moves)))
-	
+
 elif command.lower() == "massacre":
 	#use massacre function
 	print("massacre block")
