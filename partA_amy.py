@@ -198,6 +198,21 @@ def check_state(board, black):
 
 	return alive, state
 
+""" Update the board with the new position of the white piece and remove the piece
+	from its old position on the board. Also update the white locations list """
+def white_move(board, white, original_pos, new_pos):
+	white_pieces = white
+	state = board
+
+	state[original_pos[0]][original_pos[1]] = "-"
+	state[new_pos[0]][new_pos[1]] = "O"
+
+	for i in range(len(white_pieces)):
+		if white_pieces[i] == original_pos:
+			white_pieces[i] = new_pos
+
+	return white_pieces, state
+
 def massacre(board, black, white):
 	sequence = []
 	state = board
