@@ -86,13 +86,16 @@ def moves(board, locations):
 	buffers = [(1,0), (0,1), (-1,0), (0,-1)]
 
 	for piece in locations:
+		piece_moves = []
 
 		for move in buffers:
 
 			poss_move = is_valid_pos(board, locations, piece, move)
 
 			if poss_move:
-				possible_moves.append(poss_move)
+				piece_moves.append(poss_move)
+
+		possible_moves.append(piece_moves)
 
 	return possible_moves
 
@@ -132,7 +135,20 @@ black_locations = locations(board_as_array, "black")
 if command.lower() == "moves":
 	white_moves = moves(board_as_array, white_locations)
 	black_moves = moves(board_as_array, black_locations)
-	print(str(len(white_moves)) + "\n" + str(len(black_moves)))
+
+	total_white = 0
+	total_black = 0 
+
+	for i in range(len(white_moves)):
+		total_white += len(white_moves[i])
+
+	for i in range(len(black_moves)):
+		total_black += len(black_moves[i])
+
+	print(str(total_white) + "\n" + str(total_black))
+
+	#print(white_moves)
+	#print(black_moves)
 
 elif command.lower() == "massacre":
 	#use massacre function
