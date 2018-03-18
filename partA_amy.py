@@ -31,7 +31,7 @@ def locations(board, player):
 
 	return location_array
 
-def is_valid_pos(board, locations, piece, move):
+def return_valid_move(board, locations, piece, move):
 	"""
 	Returns True if move is valid.
 	_____________________
@@ -86,7 +86,6 @@ def moves(board, locations):
 	buffers = [(1,0), (0,1), (-1,0), (0,-1)]
 
 	for piece in locations:
-
 		for move in buffers:
 
 			poss_move = is_valid_pos(board, locations, piece, move)
@@ -96,9 +95,71 @@ def moves(board, locations):
 
 	return possible_moves
 
+
+def gen_winning_positions(board, black_locations):
+	"""
+	Generates a list of the winning positions in the game
+	[[Position Pair], (Single Pos)]
+	________________________
+	Input Variables:
+		board: The board array
+		black_locations: The list of the locations of black pieces
+	"""
+	winning_pos = []
+	winning_pair = []
+	winning_buffer = []
+	buffers = [(1,0), (-1,0), (0,1), (0,-1)]
+
+	""" Loop through the black pieces positions and determine how to kill them"""
+	for piece in black_locations:
+
+		piece_i = piece[0]
+		piece_j = piece[1]
+
+		""" Check all of the available killing places"""
+		for killpos in buffers:
+
+			buffer_i = killpos[0]
+			buffer_j = killpos[1]
+
+			""" Check for corners"""
+			try:
+				if board[piece_i + buffer_i][piece_j + buffer_j] == "X":
+					winning_pair = []
+					winning_buffer = []
+					winning_pos.append((piece_i - buffer_i, piece_j - buffer_j))
+
+				""" Check for other black pieces"""
+				elif board[piece_i + buffer_i][piece_j + buffer_j] == "@":
+					winning_pair = []
+					winning_buffer = []
+
+				""" Ignore White pieces in building these sets"""
+				elif board[piece_i + buffer_i][piece_j + buffer_j] in "-O":
+					winning_pair.append((piece_i + buffer_i, piece_j + buffer_j))
+
+				else:
+					pass
+
+				""" Add each tuple pair to a list"""
+				if len(winning_pair) == 2:
+					winning_buffer.append(winning_pair)
+					winning_pair = []
+
+				""" Add each list pair to a list"""
+				if len(winning_buffer) == 2:
+					winning_pos.append(winning_buffer)
+					winning_pair = []
+					winning_buffer = []
+
+			except IndexError:
+				winning_pair = []
+				winning_buffer = []
+
+	return winning_pos
+
 def massacre(board, black, white):
 	sequence = []
-
 
 
 
@@ -135,5 +196,4 @@ if command.lower() == "moves":
 	print(str(len(white_moves)) + "\n" + str(len(black_moves)))
 
 elif command.lower() == "massacre":
-	#use massacre function
-	print("massacre block")
+	print(gen_winning_positions(board_as_array, black_locations))
