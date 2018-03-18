@@ -41,7 +41,7 @@ def is_valid_pos(board, locations, piece, move):
 		piece:			 The location of the current piece
 		move:			The direction you want to move in (as a (0,1) tuple)
 """
-	move_i = move[0]
+		move_i = move[0]
 	move_j = move[1]
 
 	piece_i = piece[0]
@@ -59,7 +59,7 @@ def is_valid_pos(board, locations, piece, move):
 
 	# One space moves are valid
 	if position == "-":
-		return True
+		return (move_i + piece_i, move_j + piece_j)
 
 	#Try jumping
 	elif position == "X":
@@ -76,25 +76,25 @@ def is_valid_pos(board, locations, piece, move):
 			return False
 
 		if jump == "-":
-			return True
+			return (move_i + piece_i, move_j + piece_j)
 
 	return False
 
 """Determine the number of moves for each player """
 def moves(board, locations):
-	num_moves = 0
+	possible_moves = []
 	buffers = [(1,0), (0,1), (-1,0), (0,-1)]
 
 	for piece in locations:
-		piece_moves = 0
 
 		for move in buffers:
 
-			piece_moves += is_valid_pos(board, locations, piece, move)
+			poss_move = is_valid_pos(board, locations, piece, move)
 
-		num_moves += piece_moves
+			if poss_move:
+				possible_moves.append(poss_move)
 
-	return num_moves
+	return possible_moves
 
 def massacre(board, black, white):
 	sequence = []
@@ -132,8 +132,8 @@ black_locations = locations(board_as_array, "black")
 if command.lower() == "moves":
 	white_moves = moves(board_as_array, white_locations)
 	black_moves = moves(board_as_array, black_locations)
-	print(str(white_moves) + "\n" + str(black_moves))
-
+	print(str(len(white_moves)) + "\n" + str(len(black_moves)))
+	
 elif command.lower() == "massacre":
 	#use massacre function
 	print("massacre block")
