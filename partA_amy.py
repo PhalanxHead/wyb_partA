@@ -31,8 +31,16 @@ def locations(board, player):
 
 	return location_array
 
-def is_valid_move(board, locations, piece, move):
-
+def is_valid_pos(board, locations, piece, move):
+"""
+	Returns True if move is valid.
+	_____________________
+	Input Vars:
+		board: 			The board array
+		locations: 	  The list of piece locations
+		piece:			 The location of the current piece
+		move:			The direction you want to move in (as a (0,1) tuple)
+"""
 	move_i = move[0]
 	move_j = move[1]
 
@@ -82,7 +90,7 @@ def moves(board, locations):
 
 		for move in buffers:
 
-			piece_moves += is_valid_move(board, locations, piece, move)
+			piece_moves += is_valid_pos(board, locations, piece, move)
 
 		num_moves += piece_moves
 
