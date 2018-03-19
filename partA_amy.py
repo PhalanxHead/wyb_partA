@@ -48,23 +48,24 @@ def return_valid_move(board, locations, piece, move):
 	piece_j = piece[1]
 
 	try:
-	# try and move the piece, moves outside the board are invalid.
+	""" Try and move the piece, moves outside the board are invalid."""
 		position = board[piece_i + move_i][piece_j + move_j]
 	except IndexError:
 		return False
 
-	# Outside the board again,
+	""" Outside the board again """
 	if ((piece_i + move_i) < 0) or ((piece_j + move_j) < 0):
 		return False
 
-	# One space moves are valid
+	""" One space moves are valid if there are no pieces in the way"""
 	if position == "-":
 		return (move_i + piece_i, move_j + piece_j)
 
-	#Try jumping
+	""" Can't move into a corner """
 	elif position == "X":
 		pass
 
+	""" Try jumping """
 	elif position == "O" or position == "@":
 
 		try:
@@ -212,6 +213,74 @@ def white_move(board, white, original_pos, new_pos):
 			white_pieces[i] = new_pos
 
 	return white_pieces, state
+
+	
+def calc_man_dist(piece, pos):
+	"""
+	Calcuates the manhattan distance between 2 positions
+	Returns: Manhattan Distance (int)
+	__________________________
+	Input Variabes:
+		pos1: First (col, row) tuple
+		pos2: Second (col, row) tuple
+	"""
+	piece_i = piece[0]
+	piece_j = piece[1]
+	pos_i = pos[0]
+	pos_j = pos[1]
+
+	man_dist = (abs(piece_i - pos_i) + abs(piece_j - pos_j))
+
+	return man_dist
+
+
+def get_min_manhattan_dist(board, white_locations, winning_pos):
+	"""
+	Calculates the manhattan distance between white pieces and current  winning positions.
+	Returns: List(White Piece Location, Winning Position, Lowest Manhattan Distance)
+	______________________
+	Input Variables:
+		board: 							The board array
+		white_locations:		The location list of all  the white pieces
+		winning_pos: 			The list of all the winning pairs.
+	"""
+
+	""" Just for the sake of initial values"""
+	min_dist = [(9,9),(9,9),100]
+
+	for piece in white_locations:
+		piece_i = piece[0]
+		piece_j = piece[1]
+
+		""" The winning positions are formatted kind of annoyingly for this purpose"""
+		for pos_quad in winning_pos:
+
+			if isinstance(pos_quad, list):
+				for pos_pair in pos_quad:
+
+					if isinstance(pos_pair, list):
+						for pos in pos_pair:
+
+							man_dist = calc_man_dist(piece, pos)
+
+							if man_dist < min_dist[2]:
+								min_dist = [piece, pos, man_dist]
+
+					""" Must otherwise be a tuple"""
+					else:
+						man_dist = calc_man_dist(piece, pos)
+
+						if man_dist < min_dist[2]:
+							min_dist = [piece, pos, man_dist]
+			""" Also Must otherwise be a tuple """
+			else:
+				man_dist = calc_man_dist(piece, pos)
+
+				if man_dist < min_dist[2]:
+					min_dist = [piece, pos, man_dist]
+
+	return min_dist
+
 
 def massacre(board, black, white):
 	sequence = []
