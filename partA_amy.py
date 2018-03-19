@@ -199,7 +199,26 @@ def check_state(board, black):
 
 	return alive, state
 
-def calc_manhattan_dist(board, white_locations, winning_pos):
+def calc_man_dist(piece, pos):
+	"""
+	Calcuates the manhattan distance between 2 positions
+	Returns: Manhattan Distance (int)
+	__________________________
+	Input Variabes:
+		pos1: First (col, row) tuple
+		pos2: Second (col, row) tuple
+	"""
+	piece_i = piece[0]
+	piece_j = piece[1]
+	pos_i = pos[0]
+	pos_j = pos[1]
+
+	man_dist = (abs(piece_i - pos_i) + abs(piece_j - pos_j))
+
+	return man_dist
+
+
+def get_min_manhattan_dist(board, white_locations, winning_pos):
 	"""
 	Calculates the manhattan distance between white pieces and current  winning positions.
 	Returns: List(White Piece Location, Winning Position, Lowest Manhattan Distance)
@@ -212,15 +231,39 @@ def calc_manhattan_dist(board, white_locations, winning_pos):
 
 	""" Just for the sake of initial values"""
 	min_dist = [(9,9),(9,9),100]
-	for piece in white_locations:
 
+	for piece in white_locations:
 		piece_i = piece[0]
 		piece_j = piece[1]
 
-		for 
+		""" The winning positions are formatted kind of annoyingly for this purpose"""
+		for pos_quad in winning_pos:
 
+			if isinstance(pos_quad, list):
+				for pos_pair in pos_quad:
 
+					if isinstance(pos_pair, list):
+						for pos in pos_pair:
 
+							man_dist = calc_man_dist(piece, pos)
+
+							if man_dist < min_dist[2]:
+								min_dist = [piece, pos, man_dist]
+
+					""" Must otherwise be a tuple"""
+					else:
+						man_dist = calc_man_dist(piece, pos)
+
+						if man_dist < min_dist[2]:
+							min_dist = [piece, pos, man_dist]
+			""" Also Must otherwise be a tuple """
+			else:
+				man_dist = calc_man_dist(piece, pos)
+
+				if man_dist < min_dist[2]:
+					min_dist = [piece, pos, man_dist]
+
+	return min_dist
 
 
 def massacre(board, black, white):
