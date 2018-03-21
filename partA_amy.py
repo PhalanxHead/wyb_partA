@@ -199,6 +199,35 @@ def check_state(board, black):
 
 	return alive, state
 
+
+""" Check if a potential white move will kill the white piece, hence we wouldn't
+	to proceed with the following move. """
+def white_killed(board, new_pos):
+	new_pos_i = new_pos[0]
+	new_pos_j = new_pos[1]
+
+	if new_pos_i = 0 or new_pos_i = 7:
+		if (state[piece_i][piece_j + 1] == "@") and (state[piece_i][piece_j - 1] == "@") //
+		or (state[piece_i][piece_j + 1] == "@") and (state[piece_i][piece_j - 1] == "X") //
+		or (state[piece_i][piece_j + 1] == "X") and (state[piece_i][piece_j - 1] == "@"):
+
+			return True
+
+	elif new_pos_j = 9 or new_pos_j = 7:
+		if (state[piece_i + 1][piece_j] == "@") and (state[piece_i - 1][piece_j] == "@") //
+		or (state[piece_i + 1][piece_j] == "X") and (state[piece_i - 1][piece_j] == "@") //
+		or (state[piece_i + 1][piece_j] == "@") and (state[piece_i - 1][piece_j] == "X"):
+
+			return True
+	else:
+		if (state[piece_i][piece_j + 1] == "@") and (state[piece_i][piece_j - 1] == "@") //
+		or (state[piece_i + 1][piece_j] == "@") and (state[piece_i - 1][piece_j] == "@"):
+
+			return True
+
+	return False
+
+
 """ Update the board with the new position of the white piece and remove the piece
 	from its old position on the board. Also update the white locations list """
 def white_move(board, white, original_pos, new_pos):
