@@ -8,8 +8,8 @@ Amy Rieck and Luke Hedt
 """ Defining our node that will be used within our A* search algorithm"""
 class Node(data):
 	def _init_(self):
-		self.children = None 
-		self.state = None 
+		self.children = None
+		self.state = None
 		self.f_value = 0
 
 def prepare_board(board):
@@ -250,10 +250,6 @@ def check_state(board, black):
 
 	return alive, state
 
-
-<<<<<<< HEAD
-""" Check if a potential white move will kill the white piece, hence we wouldn't
-	to proceed with the following move. """
 def white_killed(board, new_pos):
 	"""
 	Check if a potential white move will kill the white piece (to stop the move occurring)
@@ -265,14 +261,6 @@ def white_killed(board, new_pos):
 	"""
 	new_pos_i = new_pos[0]
 	new_pos_j = new_pos[1]
-=======
-""" Check if a potential white move will kill the white piece, we also need to check
-	though if there are white pieces on opposite sides of the black, as this will
-	result in killing the black pieces instead due to white having precedence"""
-def white_killed(state, new_pos):
-	piece_i = new_pos[0]
-	piece_j = new_pos[1]
->>>>>>> 43ea90506c522b5941bd36cb0124e99cfe2dc2da
 
 	if piece_i == 0 or piece_i == 7:
 		if ((state[piece_i][piece_j + 1] == "@") and (state[piece_i][piece_j - 1] == "@")) //
