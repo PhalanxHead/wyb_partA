@@ -608,7 +608,7 @@ def A_star_search(start, goal, state):
 				child.f_value = child.g_value + calc_man_dist(child.state, goal_state)
 	
 
-	return sequence
+	return sequence, goal_state
 
 def massacre(board, black, white):
 	"""
@@ -626,12 +626,23 @@ def massacre(board, black, white):
 	white_location = white
 
 	while alive_pieces:
-		#generate a list of valid moves for white
-		#choose move with minimum manhatten distance
-		#generate a list of position that white should reach in order to eliminate black pieces
 
-		alive_pieces, state = check_state(board, black)
+		pieces_to_kill = black_to_kill(state, alive_pieces)
+		white1_orig, white1_goal, white2_orig, white2_goal = white_pieces(pieces_to_kill, state, white_location)
 
+		white_1_sequence, state = A_star_search(white1_orig, white1_goal, state)
+		white_2_sequence, state = A_star_search(white2_orig, white2_goal, state)
+
+		for i in range(len(white_1_sequence)):
+			sequence.append(white_1_sequence[i])
+
+		for j in range(len(white_2_sequence)):
+			sequence.append(white_2_sequence[j])
+
+		white_location, state = white_move(state, white_location, white1_orig, white2_goal)
+		white_location, state = white_move(state, white_location, white2_orig, white2_goal)
+
+		alive_pieces, state = check_state(state, alive_pieces)
 
 	return sequence
 
