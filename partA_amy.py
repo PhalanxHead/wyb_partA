@@ -551,9 +551,8 @@ def A_star_search(start, goal, state):
 	root_node = Node()
 
 	root_node.state = start_state
-	root_node.f_value = 0
-
-	""" do stuff with the kids """
+	root_node.g_value = 0
+	root_node.f_value = calc_man_dist(goal, start_state)
 
 	nodes_to_explore.append(root_node)
 
@@ -569,14 +568,14 @@ def A_star_search(start, goal, state):
 				min_f_value = node.f_value
 
 
-		if curr_node.state == goal:
+		if curr_node.state = goal:
 			#We want to recreate the sequence
 			break
 
 		nodes_searched.append(curr_node)
 		nodes_explored.delete(curr_node)
 
-		#Create the children nodes
+		#Create the children nodes 
 		next_moves = []
 
 		for move in buffers:
@@ -601,14 +600,15 @@ def A_star_search(start, goal, state):
 			elif child.state not in nodes_to_explore:
 				nodes_to_explore.append(child)
 
+			# confusing line below 
 			new_score = curr_node.g_value + calc_man_dist(child.state, curr_node.state)
 
+			#also this if statement 
 			if new_score < child.g_value:
 
 				sequence.append([curr_node.state,child.state])
 				child.g_value = new_score
 				child.f_value = child.g_value + calc_man_dist(child.state, goal_state)
-
 
 	return sequence, goal_state
 
