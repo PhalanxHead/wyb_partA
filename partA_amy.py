@@ -122,7 +122,7 @@ def moves(board, locations):
 
 		for move in buffers:
 
-			poss_move = is_valid_pos(board, locations, piece, move)
+			poss_move = return_valid_move(board, locations, piece, move)
 
 			if poss_move:
 				piece_moves.append(poss_move)
@@ -244,6 +244,7 @@ def check_state(board, black):
 	return alive, state
 
 
+<<<<<<< HEAD
 """ Check if a potential white move will kill the white piece, hence we wouldn't
 	to proceed with the following move. """
 def white_killed(board, new_pos):
@@ -257,27 +258,104 @@ def white_killed(board, new_pos):
 	"""
 	new_pos_i = new_pos[0]
 	new_pos_j = new_pos[1]
+=======
+""" Check if a potential white move will kill the white piece, we also need to check
+	though if there are white pieces on opposite sides of the black, as this will
+	result in killing the black pieces instead due to white having precedence"""
+def white_killed(state, new_pos):
+	piece_i = new_pos[0]
+	piece_j = new_pos[1]
+>>>>>>> 43ea90506c522b5941bd36cb0124e99cfe2dc2da
 
-	if new_pos_i = 0 or new_pos_i = 7:
-		if (state[piece_i][piece_j + 1] == "@") and (state[piece_i][piece_j - 1] == "@") //
+	if piece_i == 0 or piece_i == 7:
+		if ((state[piece_i][piece_j + 1] == "@") and (state[piece_i][piece_j - 1] == "@")) //
 		or (state[piece_i][piece_j + 1] == "@") and (state[piece_i][piece_j - 1] == "X") //
 		or (state[piece_i][piece_j + 1] == "X") and (state[piece_i][piece_j - 1] == "@"):
 
-			return True
+			""" Only need to check left and right of the piece"""
 
-	elif new_pos_j = 9 or new_pos_j = 7:
+			if (piece_j - 2 < 0):
+				pass
+			else:
+				piece_check = state[piece_i][piece_j - 2]
+
+				if piece_check == "O":
+					return False
+
+			try:
+				piece_check = state[piece_i][piece_j + 2]
+
+			except IndexError:
+				piece_check = False
+
+			if (piece_check == "O"):
+				return False
+
+	elif piece_j == 0 or piece_j == 7:
 		if (state[piece_i + 1][piece_j] == "@") and (state[piece_i - 1][piece_j] == "@") //
 		or (state[piece_i + 1][piece_j] == "X") and (state[piece_i - 1][piece_j] == "@") //
 		or (state[piece_i + 1][piece_j] == "@") and (state[piece_i - 1][piece_j] == "X"):
 
-			return True
+			""" Only need to check above and below of the piece"""
+
+			if (piece_i - 2 < 0):
+				pass
+			else:
+				piece_check = state[piece_i - 2][piece_j]
+
+				if piece_check == "O":
+					return False
+
+			try:
+				piece_check = state[piece_i + 2][piece_j]:
+
+			except IndexError:
+				piece_check = False
+
+			if (piece_check == "O"):
+				return False
+
 	else:
 		if (state[piece_i][piece_j + 1] == "@") and (state[piece_i][piece_j - 1] == "@") //
-		or (state[piece_i + 1][piece_j] == "@") and (state[piece_i - 1][piece_j] == "@"):
+		or (state[piece_i + 1][piece_j] == "@") and (state[piece_i - 1][piece_j] == "@"):\
 
-			return True
+			""" Check left and right """
 
-	return False
+			if (piece_i - 2 < 0):
+				pass
+			else:
+				piece_check = state[piece_i - 2][piece_j]
+
+				if piece_check == "O":
+					return False
+
+			try:
+				piece_check = state[piece_i + 2][piece_j]
+			except IndexError:
+				piece_check = False
+
+			if (piece_check == "O"):
+				return False
+
+			""" Check above and below"""
+
+			if (piece_j - 2 < 0):
+				pass
+			else:
+				piece_check = state[piece_i][piece_j - 2]
+
+				if piece_check == "O":
+					return False
+
+			try:
+				piece_check = state[piece_i][piece_j + 2]
+			except IndexError:
+				piece_check = False
+
+			if (piece_check == "O"):
+				return False
+
+	return True
 
 
 """ Update the board with the new position of the white piece and remove the piece
@@ -530,4 +608,13 @@ if command.lower() == "moves":
 	#print(black_moves)
 
 elif command.lower() == "massacre":
+<<<<<<< HEAD
 	### Massacre
+=======
+	print(gen_winning_positions(board_as_array, black_locations))
+
+	final_sequence = massacre(board_as_array, black_locations, white_locations)
+
+	for move in final_sequence:
+		print(str(move[0]) + " -> " + str(move[1]))
+>>>>>>> 43ea90506c522b5941bd36cb0124e99cfe2dc2da
