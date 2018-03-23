@@ -243,7 +243,7 @@ def white_move(board, white, original_pos, new_pos):
 
 	return white_pieces, state
 
-	
+
 def calc_man_dist(piece, pos):
 	"""
 	Calcuates the manhattan distance between 2 positions
