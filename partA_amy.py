@@ -518,6 +518,98 @@ def white_pieces(board, black_kill, white_locations, black_locations):
 
 	return white1_orig, white1_new, white2_orig, white2_new
 
+""" Implementation of the A* algorithm, based off the pseudocode from 
+	https://en.wikipedia.org/wiki/A*_search_algorithm.
+
+	Remembering that:
+		g(n) is defined as the total cost so far from the starting state
+		h(n) is the estimated cost from the current state to the goal state (Manhattan Distance Heuristic)
+		f(n) = h(n) + g(n)
+
+	In this implementation we are using A* to find the best path for a piece to
+	reach the goal position where it would be able to capture a black piece """
+
+def A_star_search(start, goal, state):
+	start_state = start
+	goal_state = goal
+	curr_pos = start
+	buffers = [(1,0),(-1,0),(0,1),(0,-1)]
+
+	sequence = []
+
+	goal_state[goal[0]][goal[1]] = "O"
+	goal_state[start[0]][start[1]] = "-"
+
+	nodes_to_explore = []
+	nodes_searched = []
+
+	g_n_scores = []
+
+	""" Our first node is the initial state"""
+	root_node = Node()
+
+	root_node.state = start_state
+	root_node.f_value = 0
+
+	""" do stuff with the kids """
+
+	nodes_to_explore.append(root_node)
+
+	while nodes_to_explore:
+
+		for node, i in enumerate(nodes_to_explore, 0):
+			if not i:
+				curr_node = node
+				min_f_value = node.f_value
+
+			elif min_f_value > node.f_value:
+				curr_node = node
+				min_f_value = node.f_value
+
+
+		if curr_node.state = goal:
+			#We want to recreate the sequence
+			break
+
+		nodes_searched.append(curr_node)
+		nodes_explored.delete(curr_node)
+
+		#Create the children nodes 
+		next_moves = []
+
+		for move in buffers:
+			valid = return_valid_move(state, locations, curr.state, move)
+
+			if valid:
+				next_moves.append(valid)
+
+		for move in next_moves:
+			new_child = Node()
+			new_child.state = move
+			new_child.g_value = curr_node.g_value
+
+			curr_node.children.append(new_child)
+
+		for child in curr_node.children:
+
+			if child.state in nodes_searched:
+				#we don't care about this node
+				pass
+
+			elif child.state not in nodes_to_explore:
+				nodes_to_explore.append(child)
+
+			new_score = curr_node.g_value + calc_man_dist(child.state, curr_node.state)
+
+			if new_score < child.g_value:
+
+				sequence.append([curr_node.state,child.state])
+				child.g_value = new_score
+				child.f_value = child.g_value + calc_man_dist(child.state, goal_state)
+	
+
+	return sequence
+
 def massacre(board, black, white):
 	"""
 	Sets off the Massacre AI
