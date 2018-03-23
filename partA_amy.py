@@ -7,7 +7,7 @@ Amy Rieck and Luke Hedt
 
 """ Defining our node that will be used within our A* search algorithm"""
 
-class Node(data):
+class Node():
 	def _init_(self):
 		self.children = []
 		self.state = None
@@ -520,7 +520,7 @@ def white_pieces(board, black_kill, white_locations, black_locations):
 
 	return white1_orig, white1_new, white2_orig, white2_new
 
-""" Implementation of the A* algorithm, based off the pseudocode from 
+""" Implementation of the A* algorithm, based off the pseudocode from
 	https://en.wikipedia.org/wiki/A*_search_algorithm.
 
 	Remembering that:
@@ -569,14 +569,14 @@ def A_star_search(start, goal, state):
 				min_f_value = node.f_value
 
 
-		if curr_node.state = goal:
+		if curr_node.state == goal:
 			#We want to recreate the sequence
 			break
 
 		nodes_searched.append(curr_node)
 		nodes_explored.delete(curr_node)
 
-		#Create the children nodes 
+		#Create the children nodes
 		next_moves = []
 
 		for move in buffers:
@@ -608,7 +608,7 @@ def A_star_search(start, goal, state):
 				sequence.append([curr_node.state,child.state])
 				child.g_value = new_score
 				child.f_value = child.g_value + calc_man_dist(child.state, goal_state)
-	
+
 
 	return sequence, goal_state
 
