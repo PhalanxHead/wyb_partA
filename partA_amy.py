@@ -5,6 +5,13 @@ Amy Rieck and Luke Hedt
 16/03/2018 - 30/03/2018
 """
 
+""" Defining our node that will be used within our A* search algorithm"""
+class Node(data):
+	def _init_(self):
+		self.children = None 
+		self.state = None 
+		self.f_value = 0
+
 def prepare_board(board):
 	"""
 	Transforms the text board into an array.
