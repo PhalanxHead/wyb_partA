@@ -608,13 +608,7 @@ if command.lower() == "moves":
 	#print(black_moves)
 
 elif command.lower() == "massacre":
-<<<<<<< HEAD
-	### Massacre
-=======
-	print(gen_winning_positions(board_as_array, black_locations))
-
 	final_sequence = massacre(board_as_array, black_locations, white_locations)
 
 	for move in final_sequence:
 		print(str(move[0]) + " -> " + str(move[1]))
->>>>>>> 43ea90506c522b5941bd36cb0124e99cfe2dc2da
