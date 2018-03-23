@@ -8,9 +8,10 @@ Amy Rieck and Luke Hedt
 """ Defining our node that will be used within our A* search algorithm"""
 class Node(data):
 	def _init_(self):
-		self.children = None
+		self.children = []
 		self.state = None
 		self.f_value = 0
+		self.g_value = 0
 
 def prepare_board(board):
 	"""
@@ -62,12 +63,12 @@ def locations(board, player):
 
 def return_valid_move(board, locations, piece, move):
 	"""
-	Returns:		 True if move is valid.
+	Returns:		 	True if move is valid.
 	________________________
 	Input Variables:
 		board: 			The board array
-		locations: 	  The list of piece locations
-		piece:			 The location of the current piece
+		locations: 	  	The list of piece locations
+		piece:			The location of the current piece
 		move:			The direction you want to move in (as a (0,1) tuple)
 	"""
 	move_i = move[0]
@@ -116,8 +117,8 @@ def moves(board, locations):
 	Returns:		List(Tuple(A possible move)).
 	________________________
 	Input Variables:
-		board:		    	The board array as defined above.
-		locations:		  A list of all the locations to try moves for.
+		board:		   The board array as defined above.
+		locations:	   A list of all the locations to try moves for.
 	"""
 	possible_moves = []
 	buffers = [(1,0), (0,1), (-1,0), (0,-1)]
@@ -139,11 +140,11 @@ def moves(board, locations):
 def gen_winning_positions(board, black_locations):
 	"""
 	Generates a list of the winning positions in the game
-	Returns:			[[Position Pair], (Single Pos)]
+	Returns:				[[Position Pair], (Single Pos)]
 	________________________
 	Input Variables:
-		board: 			The board array
-		black_locations: 		The list of the locations of black pieces
+		board: 				The board array
+		black_locations: 	The list of the locations of black pieces
 	"""
 	winning_pos = []
 	winning_pair = []
@@ -207,7 +208,7 @@ def check_state(board, black):
 	________________________
 	Input Variables:
 		board:		The Board Array as defined above.
-		black:		 The list of black locations.
+		black:		The list of black locations.
 	"""
 	alive = black
 	state = board
@@ -247,10 +248,10 @@ def check_state(board, black):
 def white_killed(board, new_pos):
 	"""
 	Check if a potential white move will kill the white piece (to stop the move occurring)
-	Returns:			True if white could be killed.
+	Returns:		True if white could be killed.
 	________________________
 	Input Variables:
-		board:			The Board Array as defined above
+		board:		The Board Array as defined above
 		new_pos:	The position white is trying to move to.
 	"""
 	new_pos_i = new_pos[0]
@@ -350,13 +351,13 @@ def white_move(board, white, original_pos, new_pos):
 	"""
 	Updated the board with the new position of the white piece, and remove it from it's old
 	board position. Also update the white locations list.
-	Returns:				Tuple(List(White Locations), New Board)
+	Returns:			Tuple(List(White Locations), New Board)
 	________________________
 	Input Variables:
-		board:					The board array as defined above
-		white:					The list of white locations
-		original_pos:		The original position of the white piece
-		new_pos:			The position to move the piece to
+		board:			The board array as defined above
+		white:			The list of white locations
+		original_pos:	The original position of the white piece
+		new_pos:		The position to move the piece to
 	"""
 	white_pieces = white
 	state = board
@@ -393,12 +394,12 @@ def calc_man_dist(piece, pos):
 def get_min_manhattan_dist(board, white_locations, winning_pos):
 	"""
 	Calculates the manhattan distance between white pieces and current  winning positions.
-	Returns: List(Optimal Piece 1 Location, Optimal Piece 2 Location, Sum of their Manhattan Distances)
+	Returns: 				List(Optimal Piece 1 Location, Optimal Piece 2 Location, Sum of their Manhattan Distances)
 	______________________
 	Input Variables:
-		board: 							The board array
-		white_locations:		The location list of all  the white pieces
-		winning_pos: 			The list of all the winning pairs.
+		board: 				The board array
+		white_locations:	The location list of all  the white pieces
+		winning_pos: 		The list of all the winning pairs.
 	"""
 
 	""" Just for the sake of initial values"""
@@ -449,11 +450,11 @@ def get_min_manhattan_dist(board, white_locations, winning_pos):
 def black_to_kill(board, black_locations):
 	"""
 	Generates a list of the black pieces that can be killed using the current board state.
-	Returns:		List(Killable Black pieces)
+	Returns:				List(Killable Black pieces)
 	________________________
 	Input Variables:
-		board:		The board array as defined above
-		black_locations:		The list of black location tuples
+		board:				The board array as defined above
+		black_locations:	The list of black location tuples
 	"""
 	can_kill = []
 
@@ -487,13 +488,13 @@ def white_pieces(board, black_kill, white_locations, black_locations):
 	killable in the current game state and the minimum distance between
 	white pieces and the said black piece. Black piece with the closest white
 	pieces is selected.
-	Returns:		Tuple()
+	Returns:				Tuple()
 	________________________
 	Input Variables:
-		board:		The board array as defined above
-		black_kill:		The list of killable black pieces
-		white_locations:		The list of white piece location tuples.
-		black_locations:		The list of black piece location tuples.
+		board:				The board array as defined above
+		black_kill:			The list of killable black pieces
+		white_locations:	The list of white piece location tuples.
+		black_locations:	The list of black piece location tuples.
 	"""
 	black_to_kill = None
 	white_1_orig = None
