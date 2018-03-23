@@ -374,7 +374,7 @@ def white_move(board, white, original_pos, new_pos):
 def calc_man_dist(piece, pos):
 	"""
 	Calcuates the manhattan distance between 2 positions
-	Returns:		int(Manhattan Distance)
+	Returns:		int(Manhattan Distance, (abs(x) + abs(y)))
 	__________________________
 	Input Variabes:
 		pos1:		 First (row, col) tuple

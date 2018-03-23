@@ -50,9 +50,10 @@ Therefore, once read in, the complexity of finding all valid moves is:
 
 
 2.2 What search algorithm does your program use?
-    It determines the lowest manhattan distance between white pieces and 
+    It determines the lowest manhattan distance between white pieces and
 2.3 If applicable, what is the branching factor of your search tree?
 
 2.4 What is the maximum search depth?
 
 2.5 Does your algorithm always return the shortest possible sequence of moves that will eliminate all enemy pieces?
+    No as some sequences require positions that are in 'taken' positions to jump, which the algorithm won't search for. (probably)
