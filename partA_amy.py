@@ -63,7 +63,7 @@ def locations(board, player):
 
 def return_valid_move(board, locations, piece, move):
 	"""
-	Returns:		 	True if move is valid.
+	Returns:		 	A tuple of the new location if move is valid.
 	________________________
 	Input Variables:
 		board: 			The board array
