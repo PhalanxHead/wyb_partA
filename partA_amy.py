@@ -8,9 +8,10 @@ Amy Rieck and Luke Hedt
 """ Defining our node that will be used within our A* search algorithm"""
 class Node(data):
 	def _init_(self):
-		self.children = None
+		self.children = []
 		self.state = None
 		self.f_value = 0
+		self.g_value = 0
 
 def prepare_board(board):
 	"""
