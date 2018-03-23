@@ -6,12 +6,14 @@ Amy Rieck and Luke Hedt
 """
 
 """ Defining our node that will be used within our A* search algorithm"""
+
 class Node(data):
 	def _init_(self):
 		self.children = []
 		self.state = None
 		self.f_value = 0
 		self.g_value = 0
+
 
 def prepare_board(board):
 	"""
@@ -78,7 +80,7 @@ def return_valid_move(board, locations, piece, move):
 	piece_j = piece[1]
 
 	try:
-	""" Try and move the piece, moves outside the board are invalid."""
+		""" Try and move the piece, moves outside the board are invalid."""
 		position = board[piece_i + move_i][piece_j + move_j]
 	except IndexError:
 		return False
@@ -91,11 +93,11 @@ def return_valid_move(board, locations, piece, move):
 	if position == "-":
 		return (move_i + piece_i, move_j + piece_j)
 
-	""" Can't move into a corner """
+		""" Can't move into a corner """
 	elif position == "X":
 		pass
 
-	""" Try jumping """
+		""" Try jumping """
 	elif position == "O" or position == "@":
 
 		try:
@@ -170,12 +172,12 @@ def gen_winning_positions(board, black_locations):
 					winning_buffer = []
 					winning_pos.append((piece_i - buffer_i, piece_j - buffer_j))
 
-				""" Check for other black pieces"""
+					""" Check for other black pieces"""
 				elif board[piece_i + buffer_i][piece_j + buffer_j] == "@":
 					winning_pair = []
 					winning_buffer = []
 
-				""" Ignore White pieces in building these sets"""
+					""" Ignore White pieces in building these sets"""
 				elif board[piece_i + buffer_i][piece_j + buffer_j] in "-O":
 					winning_pair.append((piece_i + buffer_i, piece_j + buffer_j))
 
@@ -218,26 +220,26 @@ def check_state(board, black):
 		piece_j = piece[1]
 
 		""" Checking if a piece has been killed vertically"""
-		if piece_i = 0 or piece_i = 7:
-			if (state[piece_i][piece_j + 1] == "O") and (state[piece_i][piece_j - 1] == "O") //
-			or (state[piece_i][piece_j + 1] == "O") and (state[piece_i][piece_j - 1] == "X") //
+		if piece_i == 0 or piece_i == 7:
+			if (state[piece_i][piece_j + 1] == "O") and (state[piece_i][piece_j - 1] == "O") \
+			or (state[piece_i][piece_j + 1] == "O") and (state[piece_i][piece_j - 1] == "X") \
 			or (state[piece_i][piece_j + 1] == "X") and (state[piece_i][piece_j - 1] == "O"):
 
 				alive.remove(piece)
 				state[piece_i][piece_j] = "-"
 
-		""" Checking if a piece has been killed horizontally """
-		elif piece_j = 0 or piece_j = 7:
-			if (state[piece_i + 1][piece_j] == "O") and (state[piece_i - 1][piece_j] == "O") //
-			or (state[piece_i + 1][piece_j] == "X") and (state[piece_i - 1][piece_j] == "O") //
+				""" Checking if a piece has been killed horizontally """
+		elif piece_j == 0 or piece_j == 7:
+			if (state[piece_i + 1][piece_j] == "O") and (state[piece_i - 1][piece_j] == "O") \
+			or (state[piece_i + 1][piece_j] == "X") and (state[piece_i - 1][piece_j] == "O") \
 			or (state[piece_i + 1][piece_j] == "O") and (state[piece_i - 1][piece_j] == "X"):
 
 				alive.remove(piece)
 				state[piece_i][piece_j] = "-"
 
-		""" Last Check in case something funny has happened. """"
+				""" Last Check in case something funny has happened. """
 		else:
-			if (state[piece_i][piece_j + 1] == "O") and (state[piece_i][piece_j - 1] == "O") //
+			if (state[piece_i][piece_j + 1] == "O") and (state[piece_i][piece_j - 1] == "O") \
 			or (state[piece_i + 1][piece_j] == "O") and (state[piece_i - 1][piece_j] == "O"):
 
 				alive.remove(piece)
@@ -258,8 +260,8 @@ def white_killed(board, new_pos):
 	new_pos_j = new_pos[1]
 
 	if piece_i == 0 or piece_i == 7:
-		if ((state[piece_i][piece_j + 1] == "@") and (state[piece_i][piece_j - 1] == "@")) //
-		or (state[piece_i][piece_j + 1] == "@") and (state[piece_i][piece_j - 1] == "X") //
+		if ((state[piece_i][piece_j + 1] == "@") and (state[piece_i][piece_j - 1] == "@")) \
+		or (state[piece_i][piece_j + 1] == "@") and (state[piece_i][piece_j - 1] == "X") \
 		or (state[piece_i][piece_j + 1] == "X") and (state[piece_i][piece_j - 1] == "@"):
 
 			""" Only need to check left and right of the piece"""
@@ -282,8 +284,8 @@ def white_killed(board, new_pos):
 				return False
 
 	elif piece_j == 0 or piece_j == 7:
-		if (state[piece_i + 1][piece_j] == "@") and (state[piece_i - 1][piece_j] == "@") //
-		or (state[piece_i + 1][piece_j] == "X") and (state[piece_i - 1][piece_j] == "@") //
+		if (state[piece_i + 1][piece_j] == "@") and (state[piece_i - 1][piece_j] == "@") \
+		or (state[piece_i + 1][piece_j] == "X") and (state[piece_i - 1][piece_j] == "@") \
 		or (state[piece_i + 1][piece_j] == "@") and (state[piece_i - 1][piece_j] == "X"):
 
 			""" Only need to check above and below of the piece"""
@@ -297,7 +299,7 @@ def white_killed(board, new_pos):
 					return False
 
 			try:
-				piece_check = state[piece_i + 2][piece_j]:
+				piece_check = state[piece_i + 2][piece_j]
 
 			except IndexError:
 				piece_check = False
@@ -306,8 +308,8 @@ def white_killed(board, new_pos):
 				return False
 
 	else:
-		if (state[piece_i][piece_j + 1] == "@") and (state[piece_i][piece_j - 1] == "@") //
-		or (state[piece_i + 1][piece_j] == "@") and (state[piece_i - 1][piece_j] == "@"):\
+		if (state[piece_i][piece_j + 1] == "@") and (state[piece_i][piece_j - 1] == "@") \
+		or (state[piece_i + 1][piece_j] == "@") and (state[piece_i - 1][piece_j] == "@"):
 
 			""" Check left and right """
 
@@ -427,7 +429,7 @@ def get_min_manhattan_dist(board, white_locations, winning_pos):
 							elif man_dist < min_dist2[2]:
 								min_dist2 = [piece, pos, man_dist]
 
-					""" Must otherwise be a tuple"""
+						""" Must otherwise be a tuple"""
 					else:
 						man_dist = calc_man_dist(piece, pos)
 
@@ -436,7 +438,7 @@ def get_min_manhattan_dist(board, white_locations, winning_pos):
 						elif man_dist < min_dist2[2]:
 							min_dist2 = [piece, pos, man_dist]
 
-			""" Also Must otherwise be a tuple """
+				""" Also Must otherwise be a tuple """
 			else:
 				man_dist = calc_man_dist(piece, pos)
 
@@ -475,7 +477,7 @@ def black_to_kill(board, black_locations):
 			if (board[piece_i[piece_j + 1]] != "@" and board[piece_i][piece_j - 1] != "@"):
 				kill = [(piece_i, piece_j + 1, (piece_i, piece_j - 1))]
 
-			elif (board[piece_i + 1][piece_j] != "@" and board[piece_i - 1][piece_j] != "@")
+			elif (board[piece_i + 1][piece_j] != "@" and board[piece_i - 1][piece_j] != "@"):
 				kill = [(piece_i + 1, piece_j), (piece_i - 1, piece_j)]
 
 		can_kill.append(kill)
