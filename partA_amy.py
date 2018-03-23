@@ -318,7 +318,63 @@ def get_min_manhattan_dist(board, white_locations, winning_pos):
 
 	return [min_dist_1[0], min_dist2[0], min_dist_1[2] + min_dist2[2]]
 
+""" Generates a list of which black pieces on the board can be killed during
+	the current game state """
+def black_to_kill(board, black_locations):
+	can_kill = []
 
+	for piece in black_locations:
+		piece_i = black_locations[i][0]
+		piece_j = black_locations[i][1]
+
+		kill = False
+
+		if (piece_i == 0) or (piece_i == 7):
+			if (board[piece_i + 1][piece_j] != "@" and board[piece_i - 1][piece_j] != "@"):
+				kill = [(piece_i + 1, piece_j), (piece_i - 1, piece_j)]
+
+		elif (piece_j == 0) or (piece_j == 7):
+			if (board[piece_i[piece_j + 1]] != "@" and board[piece_i][piece_j - 1] != "@"):
+				kill = [(piece_i, piece_j + 1, (piece_i, piece_j - 1))]
+		else:
+			if (board[piece_i[piece_j + 1]] != "@" and board[piece_i][piece_j - 1] != "@"):
+				kill = [(piece_i, piece_j + 1, (piece_i, piece_j - 1))]
+
+			elif (board[piece_i + 1][piece_j] != "@" and board[piece_i - 1][piece_j] != "@")
+				kill = [(piece_i + 1, piece_j), (piece_i - 1, piece_j)]
+
+		can_kill.append(kill)
+
+	return can_kill
+	
+""" Need to pick which black piece to kill based off which black pieces are
+	killable in the current game state and the minimum distance between
+	white pieces and the said black piece. Black piece with the closest white
+	pieces is selected."""
+def white_pieces(board, black_kill, white_locations, black_locations):
+	black_to_kill = None
+	white_1_orig = None
+	white_2_orig = None
+
+	min_distance = None
+
+	for i in range(len(black_kill)):
+		if black_kill[i]:
+			white_1_goal = black_kill[i][0]
+			white_2_goal = black_kill[i][1]
+
+			optimal1, optimal2, dist = get_min_manhattan_dist()
+
+			if dist < min_distance:
+
+				min_distance = dist
+				black_to_kill = black_locations[i]
+				white_1_orig = optimal1
+				white_2_orig = optimal2
+
+	return white1_orig, white1_new, white2_orig, white2_new
+	
+""" Massacre function """
 def massacre(board, black, white):
 	sequence = []
 	state = board
