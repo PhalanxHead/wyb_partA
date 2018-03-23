@@ -266,7 +266,7 @@ def calc_man_dist(piece, pos):
 def get_min_manhattan_dist(board, white_locations, winning_pos):
 	"""
 	Calculates the manhattan distance between white pieces and current  winning positions.
-	Returns: List(White Piece Location, Winning Position, Lowest Manhattan Distance)
+	Returns: List(Optimal Piece 1 Location, Optimal Piece 2 Location, Sum of their Manhattan Distances)
 	______________________
 	Input Variables:
 		board: 							The board array
