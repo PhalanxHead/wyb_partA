@@ -532,9 +532,7 @@ def white_pieces(board, black_kill, white_locations, black_locations):
 	reach the goal position where it would be able to capture a black piece """
 
 def A_star_search(start, goal, state):
-	start_state = start
-	goal_state = goal
-	curr_pos = start
+	goal_state = state
 	buffers = [(1,0),(-1,0),(0,1),(0,-1)]
 
 	sequence = []
@@ -552,7 +550,7 @@ def A_star_search(start, goal, state):
 
 	root_node.state = start_state
 	root_node.g_value = 0
-	root_node.f_value = calc_man_dist(goal, start_state)
+	root_node.f_value = calc_man_dist(goal, state)
 
 	nodes_to_explore.append(root_node)
 
@@ -608,7 +606,7 @@ def A_star_search(start, goal, state):
 
 				sequence.append([curr_node.state,child.state])
 				child.g_value = new_score
-				child.f_value = child.g_value + calc_man_dist(child.state, goal_state)
+				child.f_value = child.g_value + calc_man_dist(child.state, goal)
 
 	return sequence, goal_state
 
