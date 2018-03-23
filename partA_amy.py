@@ -275,7 +275,8 @@ def get_min_manhattan_dist(board, white_locations, winning_pos):
 	"""
 
 	""" Just for the sake of initial values"""
-	min_dist = [(9,9),(9,9),100]
+	min_dist1 = [(9,9),(9,9),100]
+	min_dist2 = [(9,9),(9,9),100]
 
 	for piece in white_locations:
 		piece_i = piece[0]
@@ -292,23 +293,30 @@ def get_min_manhattan_dist(board, white_locations, winning_pos):
 
 							man_dist = calc_man_dist(piece, pos)
 
-							if man_dist < min_dist[2]:
-								min_dist = [piece, pos, man_dist]
+							if man_dist < min_dist1[2]:
+								min_dist1 = [piece, pos, man_dist]
+							elif man_dist < min_dist2[2]:
+								min_dist2 = [piece, pos, man_dist]
 
 					""" Must otherwise be a tuple"""
 					else:
 						man_dist = calc_man_dist(piece, pos)
 
-						if man_dist < min_dist[2]:
-							min_dist = [piece, pos, man_dist]
+						if man_dist < min_dist1[2]:
+							min_dist1 = [piece, pos, man_dist]
+						elif man_dist < min_dist2[2]:
+							min_dist2 = [piece, pos, man_dist]
+
 			""" Also Must otherwise be a tuple """
 			else:
 				man_dist = calc_man_dist(piece, pos)
 
-				if man_dist < min_dist[2]:
-					min_dist = [piece, pos, man_dist]
+				if man_dist < min_dist1[2]:
+					min_dist1 = [piece, pos, man_dist]
+				elif man_dist < min_dist2[2]:
+					min_dist2 = [piece, pos, man_dist]
 
-	return min_dist
+	return [min_dist_1[0], min_dist2[0], min_dist_1[2] + min_dist2[2]]
 
 
 def massacre(board, black, white):
