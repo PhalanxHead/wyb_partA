@@ -91,7 +91,7 @@ def moves(board, locations):
 
 		for move in buffers:
 
-			poss_move = is_valid_pos(board, locations, piece, move)
+			poss_move = return_valid_move(board, locations, piece, move)
 
 			if poss_move:
 				piece_moves.append(poss_move)
