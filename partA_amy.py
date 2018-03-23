@@ -35,7 +35,6 @@ def prepare_board(board):
 
 	return board_array
 
-"""Determine locations of all the pieces of the board depending on the colour"""
 def locations(board, player):
 	"""
 	Determines locations of all the pieces on the board depending on the colour.
@@ -111,7 +110,6 @@ def return_valid_move(board, locations, piece, move):
 
 	return False
 
-"""Determine the number of moves for each player """
 def moves(board, locations):
 	"""
 	Determines the number of moves for a set of piece locations.
@@ -201,10 +199,6 @@ def gen_winning_positions(board, black_locations):
 
 	return winning_pos
 
-
-"""Check if any black pieces are surrounded on the board by the white pieces
-	that we moved and hence need to be removed from the board, this also updates
-	the black pieces that are alive"""
 def check_state(board, black):
 	"""
 	Checks if black pieces need to be removed (if they've been killed in the last move).
@@ -352,9 +346,6 @@ def white_killed(board, new_pos):
 
 	return True
 
-
-""" Update the board with the new position of the white piece and remove the piece
-	from its old position on the board. Also update the white locations list """
 def white_move(board, white, original_pos, new_pos):
 	"""
 	Updated the board with the new position of the white piece, and remove it from it's old
@@ -455,8 +446,6 @@ def get_min_manhattan_dist(board, white_locations, winning_pos):
 
 	return List(min_dist_1[0], min_dist2[0], min_dist_1[2] + min_dist2[2])
 
-""" Generates a list of which black pieces on the board can be killed during
-	the current game state """
 def black_to_kill(board, black_locations):
 	"""
 	Generates a list of the black pieces that can be killed using the current board state.
@@ -528,7 +517,6 @@ def white_pieces(board, black_kill, white_locations, black_locations):
 
 	return white1_orig, white1_new, white2_orig, white2_new
 
-""" Massacre function """
 def massacre(board, black, white):
 	"""
 	Sets off the Massacre AI
