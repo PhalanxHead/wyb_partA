@@ -286,8 +286,6 @@ def white_killed(state, new_pos):
 			if (piece_check == "O"):
 				return False
 
-			return True
-
 	elif piece_j == 0 or piece_j == 7:
 		if (state[piece_i + 1][piece_j] == "@") and (state[piece_i - 1][piece_j] == "@") \
 		or (state[piece_i + 1][piece_j] == "X") and (state[piece_i - 1][piece_j] == "@") \
@@ -312,9 +310,8 @@ def white_killed(state, new_pos):
 			if (piece_check == "O"):
 				return False
 
-			return True
-
 	else:
+
 
 		if (state[piece_i][piece_j + 1] == "@") and (state[piece_i][piece_j - 1] == "@") \
 		or (state[piece_i + 1][piece_j] == "@") and (state[piece_i - 1][piece_j] == "@"):
@@ -355,9 +352,7 @@ def white_killed(state, new_pos):
 			if (piece_check == "O"):
 				return False
 
-			return True
-
-	return False
+	return True
 
 def white_move(board, white, original_pos, new_pos):
 	"""
@@ -531,7 +526,7 @@ def white_pieces(board, black_kill, white_locations, black_locations):
 				white2_orig = optimal2
 
 	return white1_orig, white1_goal, white2_orig, white2_goal
-	
+
 
 """ Implementation of the A* algorithm, based off the pseudocode from
 	https://en.wikipedia.org/wiki/A*_search_algorithm.
@@ -605,13 +600,19 @@ def A_star_search(start, goal, state):
 		for child in curr_node.children:
 
 			if child.state in nodes_searched:
-				"""  Stuff """
+				#we don't care about this node
 				pass
 
 			elif child.state not in nodes_to_explore:
 				nodes_to_explore.append(child)
 
-			if (child.f_value < curr_node.f_value) and not white_killed(state, child.state):
+			# confusing line below
+			#print(child.state)
+			#print(curr_node.state)
+
+			#also this if statement
+			#print(child.state)
+			if (child.f_value < curr_node.f_value) and white_killed(state, child.state):
 
 				child.best_neighbour = curr_node
 
@@ -642,7 +643,7 @@ def massacre(board, black, white):
 	white_location = white
 	black_location = black
 
-	
+	"""
 	while alive_pieces:
 
 		pieces_to_kill = black_to_kill(state, alive_pieces)
@@ -661,11 +662,19 @@ def massacre(board, black, white):
 		white_location, state = white_move(state, white_location, white2_orig, white2_goal)
 
 		alive_pieces, state = check_state(state, alive_pieces)
+	"""
 
 	test = A_star_search((0,3), (3,5), state)
 
 	return sequence
 
+def print_board(board):
+	boardStr = " "
+	for line in board:
+		for space in line:
+			boardStr = boardStr + space + " "
+
+	print(boardStr)
 
 """
 ******************** MAIN **************************
@@ -688,6 +697,7 @@ while (rowcount < 9):
 
 """Represent the board as a matrix """
 board_as_array = prepare_board(board)
+print_board(board)
 
 """Determine the locations of each piece on the board """
 white_locations = locations(board_as_array, "white")
