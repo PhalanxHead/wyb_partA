@@ -575,7 +575,7 @@ def A_star_search(start, goal, state):
 		nodes_searched.append(curr_node)
 		nodes_explored.delete(curr_node)
 
-		#Create the children nodes 
+		#Create the children nodes
 		next_moves = []
 
 		for move in buffers:
@@ -600,10 +600,10 @@ def A_star_search(start, goal, state):
 			elif child.state not in nodes_to_explore:
 				nodes_to_explore.append(child)
 
-			# confusing line below 
+			# confusing line below
 			new_score = curr_node.g_value + calc_man_dist(child.state, curr_node.state)
 
-			#also this if statement 
+			#also this if statement
 			if new_score < child.g_value:
 
 				sequence.append([curr_node.state,child.state])
