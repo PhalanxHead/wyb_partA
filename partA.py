@@ -250,17 +250,17 @@ def check_state(board, black):
 
 	return alive, state
 
-def white_killed(board, new_pos):
+def white_killed(state, new_pos):
 	"""
 	Check if a potential white move will kill the white piece (to stop the move occurring)
 	Returns:		True if white could be killed.
 	________________________
 	Input Variables:
-		board:		The Board Array as defined above
+		state:		The Board Array as defined above
 		new_pos:	The position white is trying to move to.
 	"""
-	new_pos_i = new_pos[0]
-	new_pos_j = new_pos[1]
+	piece_i = new_pos[0]
+	piece_j = new_pos[1]
 
 	if piece_i == 0 or piece_i == 7:
 		if ((state[piece_i][piece_j + 1] == "@") and (state[piece_i][piece_j - 1] == "@")) \
@@ -311,6 +311,9 @@ def white_killed(board, new_pos):
 				return False
 
 	else:
+
+		print(type(state))
+
 		if (state[piece_i][piece_j + 1] == "@") and (state[piece_i][piece_j - 1] == "@") \
 		or (state[piece_i + 1][piece_j] == "@") and (state[piece_i - 1][piece_j] == "@"):
 
@@ -563,8 +566,7 @@ def A_star_search(start, goal, state):
 	while nodes_to_explore:
 
 		for i, node in enumerate(nodes_to_explore, 0):
-			print(node)
-			
+
 			if i == 0:
 				curr_node = node
 				min_f_value = node.f_value
@@ -575,7 +577,6 @@ def A_star_search(start, goal, state):
 
 
 		if curr_node.state == goal:
-			sequence.append(curr_node)
 			break
 
 		nodes_searched.append(curr_node)
@@ -594,6 +595,7 @@ def A_star_search(start, goal, state):
 			new_child = Node()
 			new_child.state = move
 			new_child.g_value = curr_node.g_value
+			new_child.f_value = calc_man_dist(move, goal) + new_child.g_value
 			new_child.children = []
 
 			curr_node.children.append(new_child)
@@ -610,15 +612,16 @@ def A_star_search(start, goal, state):
 			# confusing line below
 			#print(child.state)
 			#print(curr_node.state)
-			new_score = curr_node.g_value + calc_man_dist(child.state, curr_node.state)
 
 			#also this if statement
-			if new_score < child.g_value:
+			#print(child.state)
+			if (child.f_value < curr_node.f_value) and white_killed(state, child.state):
+
+				if child in sequence:
+					pass
 
 				sequence.append(child)
 				child.best_neighbour = curr_node
-				child.g_value = new_score
-				child.f_value = child.g_value + calc_man_dist(child.state, goal)
 
 	return sequence, goal_state
 
@@ -659,7 +662,7 @@ def massacre(board, black, white):
 		alive_pieces, state = check_state(state, alive_pieces)
 	"""
 
-	test = A_star_search((2,3), (3,5), state)
+	test = A_star_search((1,3), (3,5), state)
 
 	return sequence
 
