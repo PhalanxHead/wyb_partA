@@ -1,28 +1,20 @@
-"""
-Part A of the 2018 AI Assignment
-Alistair Moffat Appreciation Society
-Amy Rieck and Luke Hedt
-16/03/2018 - 30/03/2018
+""" Okay how do we kill
+	- Fix A* so that we also check that white pieces won't die 
+	- Fix A* with the g(n) calculation as currently it is a little dodgy
+	- Fix A* so we are getting a sequence from the moves 
 """
 
 """ Defining our node that will be used within our A* search algorithm"""
-
 class Node():
 	def _init_(self):
 		self.children = []
-		self.state = None
+		self.state = None 
 		self.f_value = 0
 		self.g_value = 0
 
 
+""" Transform the text board into an array  """
 def prepare_board(board):
-	"""
-	Transforms the text board into an array.
-	Returns: 		board_array - A 2D array of the characters in the board.
-	________________________
-	Input Variables:
-		board:		 A String representing the board as defined in the spec.
-	"""
 	board_array = []
 	row = []
 
@@ -32,21 +24,13 @@ def prepare_board(board):
 			board_array.append(row)
 			row = []
 
-			""" Ignore Spaces """
 		elif char != " ":
 			row.append(char)
 
 	return board_array
 
+"""Determine locations of all the pieces of the board depending on the colour"""
 def locations(board, player):
-	"""
-	Determines locations of all the pieces on the board depending on the colour.
-	Returns: 		List(Tuple(Piece Location))
-	________________________
-	Input Variables:
-		board:		 The board array as above.
-		player:		 "white" or "black", allowing piece selection.
-	"""
 	location_array = []
 
 	if player == "white":
@@ -54,7 +38,6 @@ def locations(board, player):
 	else:
 		symbol = "@"
 
-	""" Visit Every Space on the board """
 	for i in range(len(board)):
 		for j in range(len(board)):
 
@@ -65,12 +48,12 @@ def locations(board, player):
 
 def return_valid_move(board, locations, piece, move):
 	"""
-	Returns:		 	A tuple of the new location if move is valid.
-	________________________
-	Input Variables:
+	Returns True if move is valid.
+	_____________________
+	Input Vars:
 		board: 			The board array
-		locations: 	  	The list of piece locations
-		piece:			The location of the current piece
+		locations: 	  The list of piece locations
+		piece:			 The location of the current piece
 		move:			The direction you want to move in (as a (0,1) tuple)
 	"""
 	move_i = move[0]
@@ -80,24 +63,23 @@ def return_valid_move(board, locations, piece, move):
 	piece_j = piece[1]
 
 	try:
-		""" Try and move the piece, moves outside the board are invalid."""
+	# try and move the piece, moves outside the board are invalid.
 		position = board[piece_i + move_i][piece_j + move_j]
 	except IndexError:
 		return False
 
-	""" Outside the board again """
+	# Outside the board again,
 	if ((piece_i + move_i) < 0) or ((piece_j + move_j) < 0):
 		return False
 
-	""" One space moves are valid if there are no pieces in the way"""
+	# One space moves are valid
 	if position == "-":
 		return (move_i + piece_i, move_j + piece_j)
 
-		""" Can't move into a corner """
+	#Try jumping
 	elif position == "X":
 		pass
 
-		""" Try jumping """
 	elif position == "O" or position == "@":
 
 		try:
@@ -113,15 +95,8 @@ def return_valid_move(board, locations, piece, move):
 
 	return False
 
+"""Determine the number of moves for each player """
 def moves(board, locations):
-	"""
-	Determines the number of moves for a set of piece locations.
-	Returns:		List(Tuple(A possible move)).
-	________________________
-	Input Variables:
-		board:		   The board array as defined above.
-		locations:	   A list of all the locations to try moves for.
-	"""
 	possible_moves = []
 	buffers = [(1,0), (0,1), (-1,0), (0,-1)]
 
@@ -139,14 +114,15 @@ def moves(board, locations):
 
 	return possible_moves
 
+"""Determine the winning positions with respect to the current positions"""
 def gen_winning_positions(board, black_locations):
 	"""
 	Generates a list of the winning positions in the game
-	Returns:				[[Position Pair], (Single Pos)]
+	[[Position Pair], (Single Pos)]
 	________________________
 	Input Variables:
-		board: 				The board array
-		black_locations: 	The list of the locations of black pieces
+		board: The board array
+		black_locations: The list of the locations of black pieces
 	"""
 	winning_pos = []
 	winning_pair = []
@@ -172,12 +148,12 @@ def gen_winning_positions(board, black_locations):
 					winning_buffer = []
 					winning_pos.append((piece_i - buffer_i, piece_j - buffer_j))
 
-					""" Check for other black pieces"""
+				""" Check for other black pieces"""
 				elif board[piece_i + buffer_i][piece_j + buffer_j] == "@":
 					winning_pair = []
 					winning_buffer = []
 
-					""" Ignore White pieces in building these sets"""
+				""" Ignore White pieces in building these sets"""
 				elif board[piece_i + buffer_i][piece_j + buffer_j] in "-O":
 					winning_pair.append((piece_i + buffer_i, piece_j + buffer_j))
 
@@ -195,23 +171,16 @@ def gen_winning_positions(board, black_locations):
 					winning_pair = []
 					winning_buffer = []
 
-				""" Reset if something goes wrong """
 			except IndexError:
 				winning_pair = []
 				winning_buffer = []
 
 	return winning_pos
 
+"""Check if any black pieces are surrounded on the board by the white pieces
+	that we moved and hence need to be removed from the board, this also updates
+	the black pieces that are alive"""
 def check_state(board, black):
-	"""
-	Checks if black pieces need to be removed (if they've been killed in the last move).
-	Also updates the board.
-	Returns:		Tuple(Alive Black Locations, The Board Array)
-	________________________
-	Input Variables:
-		board:		The Board Array as defined above.
-		black:		The list of black locations.
-	"""
 	alive = black
 	state = board
 
@@ -219,27 +188,24 @@ def check_state(board, black):
 		piece_i = piece[0]
 		piece_j = piece[1]
 
-		""" Checking if a piece has been killed vertically"""
-		if piece_i == 0 or piece_i == 7:
-			if (state[piece_i][piece_j + 1] == "O") and (state[piece_i][piece_j - 1] == "O") \
-			or (state[piece_i][piece_j + 1] == "O") and (state[piece_i][piece_j - 1] == "X") \
+		if piece_i = 0 or piece_i = 7:
+			if (state[piece_i][piece_j + 1] == "O") and (state[piece_i][piece_j - 1] == "O") //
+			or (state[piece_i][piece_j + 1] == "O") and (state[piece_i][piece_j - 1] == "X") //
 			or (state[piece_i][piece_j + 1] == "X") and (state[piece_i][piece_j - 1] == "O"):
 
 				alive.remove(piece)
 				state[piece_i][piece_j] = "-"
 
-				""" Checking if a piece has been killed horizontally """
-		elif piece_j == 0 or piece_j == 7:
-			if (state[piece_i + 1][piece_j] == "O") and (state[piece_i - 1][piece_j] == "O") \
-			or (state[piece_i + 1][piece_j] == "X") and (state[piece_i - 1][piece_j] == "O") \
+		elif piece_j = 0 or piece_j = 7:
+			if (state[piece_i + 1][piece_j] == "O") and (state[piece_i - 1][piece_j] == "O") //
+			or (state[piece_i + 1][piece_j] == "X") and (state[piece_i - 1][piece_j] == "O") //
 			or (state[piece_i + 1][piece_j] == "O") and (state[piece_i - 1][piece_j] == "X"):
 
 				alive.remove(piece)
 				state[piece_i][piece_j] = "-"
 
-				""" Last Check in case something funny has happened. """
 		else:
-			if (state[piece_i][piece_j + 1] == "O") and (state[piece_i][piece_j - 1] == "O") \
+			if (state[piece_i][piece_j + 1] == "O") and (state[piece_i][piece_j - 1] == "O") //
 			or (state[piece_i + 1][piece_j] == "O") and (state[piece_i - 1][piece_j] == "O"):
 
 				alive.remove(piece)
@@ -247,21 +213,16 @@ def check_state(board, black):
 
 	return alive, state
 
-def white_killed(board, new_pos):
-	"""
-	Check if a potential white move will kill the white piece (to stop the move occurring)
-	Returns:		True if white could be killed.
-	________________________
-	Input Variables:
-		board:		The Board Array as defined above
-		new_pos:	The position white is trying to move to.
-	"""
-	new_pos_i = new_pos[0]
-	new_pos_j = new_pos[1]
+""" Check if a potential white move will kill the white piece, we also need to check
+	though if there are white pieces on opposite sides of the black, as this will
+	result in killing the black pieces instead due to white having precedence"""
+def white_killed(state, new_pos):
+	piece_i = new_pos[0]
+	piece_j = new_pos[1]
 
 	if piece_i == 0 or piece_i == 7:
-		if ((state[piece_i][piece_j + 1] == "@") and (state[piece_i][piece_j - 1] == "@")) \
-		or (state[piece_i][piece_j + 1] == "@") and (state[piece_i][piece_j - 1] == "X") \
+		if ((state[piece_i][piece_j + 1] == "@") and (state[piece_i][piece_j - 1] == "@")) //
+		or (state[piece_i][piece_j + 1] == "@") and (state[piece_i][piece_j - 1] == "X") //
 		or (state[piece_i][piece_j + 1] == "X") and (state[piece_i][piece_j - 1] == "@"):
 
 			""" Only need to check left and right of the piece"""
@@ -284,8 +245,8 @@ def white_killed(board, new_pos):
 				return False
 
 	elif piece_j == 0 or piece_j == 7:
-		if (state[piece_i + 1][piece_j] == "@") and (state[piece_i - 1][piece_j] == "@") \
-		or (state[piece_i + 1][piece_j] == "X") and (state[piece_i - 1][piece_j] == "@") \
+		if (state[piece_i + 1][piece_j] == "@") and (state[piece_i - 1][piece_j] == "@") //
+		or (state[piece_i + 1][piece_j] == "X") and (state[piece_i - 1][piece_j] == "@") //
 		or (state[piece_i + 1][piece_j] == "@") and (state[piece_i - 1][piece_j] == "X"):
 
 			""" Only need to check above and below of the piece"""
@@ -299,7 +260,7 @@ def white_killed(board, new_pos):
 					return False
 
 			try:
-				piece_check = state[piece_i + 2][piece_j]
+				piece_check = state[piece_i + 2][piece_j]:
 
 			except IndexError:
 				piece_check = False
@@ -308,8 +269,8 @@ def white_killed(board, new_pos):
 				return False
 
 	else:
-		if (state[piece_i][piece_j + 1] == "@") and (state[piece_i][piece_j - 1] == "@") \
-		or (state[piece_i + 1][piece_j] == "@") and (state[piece_i - 1][piece_j] == "@"):
+		if (state[piece_i][piece_j + 1] == "@") and (state[piece_i][piece_j - 1] == "@") //
+		or (state[piece_i + 1][piece_j] == "@") and (state[piece_i - 1][piece_j] == "@"):\
 
 			""" Check left and right """
 
@@ -349,18 +310,9 @@ def white_killed(board, new_pos):
 
 	return True
 
+""" Update the board with the new position of the white piece and remove the piece
+	from its old position on the board. Also update the white locations list """
 def white_move(board, white, original_pos, new_pos):
-	"""
-	Updated the board with the new position of the white piece, and remove it from it's old
-	board position. Also update the white locations list.
-	Returns:			Tuple(List(White Locations), New Board)
-	________________________
-	Input Variables:
-		board:			The board array as defined above
-		white:			The list of white locations
-		original_pos:	The original position of the white piece
-		new_pos:		The position to move the piece to
-	"""
 	white_pieces = white
 	state = board
 
@@ -377,11 +329,11 @@ def white_move(board, white, original_pos, new_pos):
 def calc_man_dist(piece, pos):
 	"""
 	Calcuates the manhattan distance between 2 positions
-	Returns:		int(Manhattan Distance, (abs(x) + abs(y)))
+	Returns: Manhattan Distance (int)
 	__________________________
 	Input Variabes:
-		pos1:		 First (row, col) tuple
-		pos2:		 Second (row, col) tuple
+		pos1: First (col, row) tuple
+		pos2: Second (col, row) tuple
 	"""
 	piece_i = piece[0]
 	piece_j = piece[1]
@@ -395,18 +347,17 @@ def calc_man_dist(piece, pos):
 
 def get_min_manhattan_dist(board, white_locations, winning_pos):
 	"""
-	Calculates the manhattan distance between white pieces and current  winning positions.
-	Returns: 				List(Optimal Piece 1 Location, Optimal Piece 2 Location, Sum of their Manhattan Distances)
+	Calculates the manhattan distance between white pieces and current winning positions.
+	Returns: List(White Piece Location, Winning Position, Lowest Manhattan Distance)
 	______________________
 	Input Variables:
-		board: 				The board array
-		white_locations:	The location list of all  the white pieces
-		winning_pos: 		The list of all the winning pairs.
+		board: 							The board array
+		white_locations:		The location list of all  the white pieces
+		winning_pos: 			The list of all the winning pairs.
 	"""
 
 	""" Just for the sake of initial values"""
-	min_dist1 = [(9,9),(9,9),100]
-	min_dist2 = [(9,9),(9,9),100]
+	min_dist = [(9,9),(9,9),100]
 
 	for piece in white_locations:
 		piece_i = piece[0]
@@ -415,7 +366,6 @@ def get_min_manhattan_dist(board, white_locations, winning_pos):
 		""" The winning positions are formatted kind of annoyingly for this purpose"""
 		for pos_quad in winning_pos:
 
-			""" Checking it's not looking at a position tuple """
 			if isinstance(pos_quad, list):
 				for pos_pair in pos_quad:
 
@@ -424,82 +374,55 @@ def get_min_manhattan_dist(board, white_locations, winning_pos):
 
 							man_dist = calc_man_dist(piece, pos)
 
-							if man_dist < min_dist1[2]:
-								min_dist1 = [piece, pos, man_dist]
-							elif man_dist < min_dist2[2]:
-								min_dist2 = [piece, pos, man_dist]
+							if man_dist < min_dist[2]:
+								min_dist = [piece, pos, man_dist]
 
-						""" Must otherwise be a tuple"""
+					""" Must otherwise be a tuple"""
 					else:
 						man_dist = calc_man_dist(piece, pos)
 
-						if man_dist < min_dist1[2]:
-							min_dist1 = [piece, pos, man_dist]
-						elif man_dist < min_dist2[2]:
-							min_dist2 = [piece, pos, man_dist]
-
-				""" Also Must otherwise be a tuple """
+						if man_dist < min_dist[2]:
+							min_dist = [piece, pos, man_dist]
+			""" Also Must otherwise be a tuple """
 			else:
 				man_dist = calc_man_dist(piece, pos)
 
-				if man_dist < min_dist1[2]:
-					min_dist1 = [piece, pos, man_dist]
-				elif man_dist < min_dist2[2]:
-					min_dist2 = [piece, pos, man_dist]
+				if man_dist < min_dist[2]:
+					min_dist = [piece, pos, man_dist]
 
-	return List(min_dist_1[0], min_dist2[0], min_dist_1[2] + min_dist2[2])
+	return min_dist
 
+""" Generates a list of which black pieces on the board can be killed during
+	the current game state """
 def black_to_kill(board, black_locations):
-	"""
-	Generates a list of the black pieces that can be killed using the current board state.
-	Returns:				List(Killable Black pieces)
-	________________________
-	Input Variables:
-		board:				The board array as defined above
-		black_locations:	The list of black location tuples
-	"""
 	can_kill = []
 
-	for black in black_locations:
-		piece_i = black[0]
-		piece_j = black[1]
-
-		print(piece_i, piece_j)
+	for piece in black_locations:
+		piece_i = black_locations[i][0]
+		piece_j = black_locations[i][1]
 
 		kill = False
 
 		if (piece_i == 0) or (piece_i == 7):
-			if (board[piece_i][piece_j + 1] != "@" and board[piece_i][piece_j - 1] != "@"):
-				kill = [(piece_i, piece_j + 1), (piece_i, piece_j - 1)]
-
-		elif (piece_j == 0) or (piece_j == 7):
 			if (board[piece_i + 1][piece_j] != "@" and board[piece_i - 1][piece_j] != "@"):
 				kill = [(piece_i + 1, piece_j), (piece_i - 1, piece_j)]
+
+		elif (piece_j == 0) or (piece_j == 7):
+			if (board[piece_i[piece_j + 1]] != "@" and board[piece_i][piece_j - 1] != "@"):
+				kill = [(piece_i, piece_j + 1, (piece_i, piece_j - 1))]
 		else:
-			if (board[piece_i][piece_j + 1] != "@" and board[piece_i][piece_j - 1] != "@"):
+			if (board[piece_i[piece_j + 1]] != "@" and board[piece_i][piece_j - 1] != "@"):
 				kill = [(piece_i, piece_j + 1, (piece_i, piece_j - 1))]
 
-			elif (board[piece_i + 1][piece_j] != "@" and board[piece_i - 1][piece_j] != "@"):
+			elif (board[piece_i + 1][piece_j] != "@" and board[piece_i - 1][piece_j] != "@")
 				kill = [(piece_i + 1, piece_j), (piece_i - 1, piece_j)]
 
 		can_kill.append(kill)
 
 	return can_kill
 
+""" Need to pick which black piece to kill and then also which white piece to kill """
 def white_pieces(board, black_kill, white_locations, black_locations):
-	"""
- 	Need to pick which black piece to kill based off which black pieces are
-	killable in the current game state and the minimum distance between
-	white pieces and the said black piece. Black piece with the closest white
-	pieces is selected.
-	Returns:				Tuple()
-	________________________
-	Input Variables:
-		board:				The board array as defined above
-		black_kill:			The list of killable black pieces
-		white_locations:	The list of white piece location tuples.
-		black_locations:	The list of black piece location tuples.
-	"""
 	black_to_kill = None
 	white_1_orig = None
 	white_2_orig = None
@@ -522,7 +445,8 @@ def white_pieces(board, black_kill, white_locations, black_locations):
 
 	return white1_orig, white1_new, white2_orig, white2_new
 
-""" Implementation of the A* algorithm, based off the pseudocode from
+
+""" Implementation of the A* algorithm, based off the pseudocode from 
 	https://en.wikipedia.org/wiki/A*_search_algorithm.
 
 	Remembering that:
@@ -535,6 +459,7 @@ def white_pieces(board, black_kill, white_locations, black_locations):
 
 def A_star_search(start, goal, state):
 	goal_state = state
+	curr_pos = start
 	buffers = [(1,0),(-1,0),(0,1),(0,-1)]
 
 	sequence = []
@@ -552,7 +477,7 @@ def A_star_search(start, goal, state):
 
 	root_node.state = start_state
 	root_node.g_value = 0
-	root_node.f_value = calc_man_dist(goal, state)
+	root_node.f_value = calc_man_dist(goal, start)
 
 	nodes_to_explore.append(root_node)
 
@@ -568,7 +493,7 @@ def A_star_search(start, goal, state):
 				min_f_value = node.f_value
 
 
-		if curr_node.state == goal:
+		if curr_node.state = goal:
 			#We want to recreate the sequence
 			break
 
@@ -579,7 +504,7 @@ def A_star_search(start, goal, state):
 		next_moves = []
 
 		for move in buffers:
-			valid = return_valid_move(state, locations, curr.state, move)
+			valid = return_valid_move(state, False, curr.state, move)
 
 			if valid:
 				next_moves.append(valid)
@@ -613,15 +538,6 @@ def A_star_search(start, goal, state):
 	return sequence, goal_state
 
 def massacre(board, black, white):
-	"""
-	Sets off the Massacre AI
-	Returns:		The Sequence of moves
-	________________________
-	Input Variables:
-		board: 		The board array as defined above
-		black:		The list of black position tuples
-		white:		The list of white position tuples
-	"""
 	sequence = []
 	state = board
 	alive_pieces = black
@@ -630,7 +546,7 @@ def massacre(board, black, white):
 	while alive_pieces:
 
 		pieces_to_kill = black_to_kill(state, alive_pieces)
-		white1_orig, white1_goal, white2_orig, white2_goal = white_pieces(pieces_to_kill, state, white_location, None)
+		white1_orig, white1_goal, white2_orig, white2_goal = white_pieces(pieces_to_kill, state, white_location)
 
 		white_1_sequence, state = A_star_search(white1_orig, white1_goal, state)
 		white_2_sequence, state = A_star_search(white2_orig, white2_goal, state)
@@ -647,11 +563,6 @@ def massacre(board, black, white):
 		alive_pieces, state = check_state(state, alive_pieces)
 
 	return sequence
-
-
-"""
-******************** MAIN **************************
-"""
 
 """Preprocessing the board """
 board = ""
@@ -697,6 +608,8 @@ if command.lower() == "moves":
 	#print(black_moves)
 
 elif command.lower() == "massacre":
+	print(gen_winning_positions(board_as_array, black_locations))
+
 	final_sequence = massacre(board_as_array, black_locations, white_locations)
 
 	for move in final_sequence:
