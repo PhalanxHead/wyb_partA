@@ -4,6 +4,8 @@ Alistair Moffat Appreciation Society
 Amy Rieck and Luke Hedt
 16/03/2018 - 30/03/2018
 """
+""" Make infinity a really large number """
+INFINITY = 9999999
 
 """ Defining our node that will be used within our A* search algorithm"""
 
@@ -501,15 +503,15 @@ def white_pieces(board, black_kill, white_locations, black_locations):
 		black_locations:	The list of black piece location tuples.
 	"""
 	black_to_kill = None
-	white_1_orig = None
-	white_2_orig = None
+	white1_orig = None
+	white2_orig = None
 
-	min_distance = None
+	min_distance = INFINITY
 
 	for i in range(len(black_kill)):
 		if black_kill[i]:
-			white_1_goal = black_kill[i][0]
-			white_2_goal = black_kill[i][1]
+			white1_goal = black_kill[i][0]
+			white2_goal = black_kill[i][1]
 
 			optimal1, optimal2, dist = get_min_manhattan_dist(board, white_locations, gen_winning_positions(board, black_locations))
 
@@ -517,10 +519,11 @@ def white_pieces(board, black_kill, white_locations, black_locations):
 
 				min_distance = dist
 				black_to_kill = black_locations[i]
-				white_1_orig = optimal1
-				white_2_orig = optimal2
+				white1_orig = optimal1
+				white2_orig = optimal2
 
-	return white1_orig, white1_new, white2_orig, white2_new
+	return white1_orig, white1_goal, white2_orig, white2_goal
+	
 
 """ Implementation of the A* algorithm, based off the pseudocode from
 	https://en.wikipedia.org/wiki/A*_search_algorithm.
