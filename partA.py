@@ -669,11 +669,10 @@ def massacre(board, black, white):
 	return sequence
 
 def print_board(board):
-	boardStr = " "
+	boardStr = ""
 	for line in board:
 		for space in line:
-			boardStr = boardStr + space + " "
-
+			boardStr = boardStr + space
 	print(boardStr)
 
 """
@@ -697,7 +696,6 @@ while (rowcount < 9):
 
 """Represent the board as a matrix """
 board_as_array = prepare_board(board)
-print_board(board)
 
 """Determine the locations of each piece on the board """
 white_locations = locations(board_as_array, "white")
