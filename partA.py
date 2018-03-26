@@ -547,8 +547,6 @@ def A_star_search(start, goal, state):
 	goal_state = state
 	buffers = [(1,0),(-1,0),(0,1),(0,-1)]
 
-	sequence = []
-
 	goal_state[goal[0]][goal[1]] = "O"
 	goal_state[start[0]][start[1]] = "-"
 
@@ -615,16 +613,17 @@ def A_star_search(start, goal, state):
 
 			if (child.f_value < curr_node.f_value) and not white_killed(state, child.state):
 
-				if child in sequence:
-					pass
-
-				sequence.append(child)
-				#sequence.append([curr_node.state, child.state])
 				child.best_neighbour = curr_node
 
-	print(sequence)
+	node = curr_node
+	sequence = [curr_node.state]
 
-	#print(sequence)
+	while node.state != start:
+		node = node.best_neighbour
+		sequence.append(node.state)
+
+	sequence = sequence[::-1]
+
 	return sequence, goal_state
 
 def massacre(board, black, white):
@@ -663,7 +662,7 @@ def massacre(board, black, white):
 
 		alive_pieces, state = check_state(state, alive_pieces)
 
-	test = A_star_search((1,3), (3,5), state)
+	test = A_star_search((0,3), (3,5), state)
 
 	return sequence
 
