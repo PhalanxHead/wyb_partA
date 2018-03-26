@@ -35,16 +35,16 @@ def massacre(board, black, white):
     sequence = []
     state = board
     alive_pieces = black
-    white_location = white
+    white_locations = white
     black_location = black
 
     while alive_pieces:
 
         pieces_to_kill = black_to_kill(state, alive_pieces)
-        white1_orig, white1_goal, white2_orig, white2_goal = white_pieces(pieces_to_kill, state, white_location, black_location)
+        white1_orig, white1_goal, white2_orig, white2_goal = white_pieces(state, pieces_to_kill, white_locations, black_location)
 
-        white_1_sequence, state = A_star_search(white1_orig, white1_goal, state)
-        white_2_sequence, state = A_star_search(white2_orig, white2_goal, state)
+        white_1_sequence, state = A_star_search(white1_orig, white1_goal, white_locations, state)
+        white_2_sequence, state = A_star_search(white2_orig, white2_goal, white_locations, state)
 
         for i in range(len(white_1_sequence)):
             sequence.append(white_1_sequence[i])
@@ -52,8 +52,8 @@ def massacre(board, black, white):
         for j in range(len(white_2_sequence)):
             sequence.append(white_2_sequence[j])
 
-        white_location, state = white_move(state, white_location, white1_orig, white2_goal)
-        white_location, state = white_move(state, white_location, white2_orig, white2_goal)
+        white_locations, state = white_move(state, white_locations, white1_orig, white2_goal)
+        white_locations, state = white_move(state, white_locations, white2_orig, white2_goal)
 
         alive_pieces, state = check_state(state, alive_pieces)
 
@@ -89,7 +89,7 @@ def black_to_kill(board, black_locations):
                 kill = [(piece_i + 1, piece_j), (piece_i - 1, piece_j)]
         else:
             if (board[piece_i][piece_j + 1] != "@" and board[piece_i][piece_j - 1] != "@"):
-                kill = [(piece_i, piece_j + 1, (piece_i, piece_j - 1))]
+                kill = [(piece_i, piece_j + 1), (piece_i, piece_j - 1)]
 
             elif (board[piece_i + 1][piece_j] != "@" and board[piece_i - 1][piece_j] != "@"):
                 kill = [(piece_i + 1, piece_j), (piece_i - 1, piece_j)]
@@ -100,7 +100,7 @@ def black_to_kill(board, black_locations):
 
 """ ************************************************************************* """
 
-def white_pieces(board, black_kill, white_locations, black_locations):
+def white_pieces(board, black_kill, white_locationss, black_locations):
     """
      Need to pick which black piece to kill based off which black pieces are
     killable in the current game state and the minimum distance between
@@ -111,7 +111,7 @@ def white_pieces(board, black_kill, white_locations, black_locations):
     Input Variables:
         board:                The board array as defined above
         black_kill:            The list of killable black pieces
-        white_locations:    The list of white piece location tuples.
+        white_locationss:    The list of white piece location tuples.
         black_locations:    The list of black piece location tuples.
     """
     black_to_kill = None
@@ -125,7 +125,7 @@ def white_pieces(board, black_kill, white_locations, black_locations):
             white1_goal = black_kill[i][0]
             white2_goal = black_kill[i][1]
 
-            optimal1, optimal2, dist = get_min_manhattan_dist(board, white_locations, gen_winning_positions(board, black_locations))
+            optimal1, optimal2, dist = get_min_manhattan_dist(board, white_locationss, gen_winning_positions(board, black_locations))
 
             if dist < min_distance:
 
@@ -138,14 +138,14 @@ def white_pieces(board, black_kill, white_locations, black_locations):
 
 """ ************************************************************************* """
 
-def get_min_manhattan_dist(board, white_locations, winning_pos):
+def get_min_manhattan_dist(board, white_locationss, winning_pos):
     """
     Calculates the manhattan distance between white pieces and current  winning positions.
     Returns:                 List(Optimal Piece 1 Location, Optimal Piece 2 Location, Sum of their Manhattan Distances)
     ______________________
     Input Variables:
         board:                 The board array
-        white_locations:    The location list of all  the white pieces
+        white_locationss:    The location list of all  the white pieces
         winning_pos:         The list of all the winning pairs.
     """
 
@@ -153,7 +153,7 @@ def get_min_manhattan_dist(board, white_locations, winning_pos):
     min_dist1 = [(9,9),(9,9),100]
     min_dist2 = [(9,9),(9,9),100]
 
-    for piece in white_locations:
+    for piece in white_locationss:
         piece_i = piece[0]
         piece_j = piece[1]
 
@@ -281,7 +281,7 @@ def gen_winning_positions(board, black_locations):
 
 """ ************************************************************************* """
 
-def A_star_search(start, goal, state):
+def A_star_search(start, goal, white_locationss, state):
     """ Implementation of the A* algorithm, based off the pseudocode from
         https://en.wikipedia.org/wiki/A*_search_algorithm.
 
@@ -336,7 +336,7 @@ def A_star_search(start, goal, state):
         next_moves = []
 
         for move in buffers:
-            valid = return_valid_move(state, locations, curr_node.state, move)
+            valid = return_valid_move(state, white_locationss, curr_node.state, move)
 
             if valid:
                 next_moves.append(valid)
