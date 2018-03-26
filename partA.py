@@ -9,10 +9,11 @@ Amy Rieck and Luke Hedt
 
 class Node():
 	def _init_(self):
-		self.children = []
+		self.children = None
 		self.state = None
 		self.f_value = 0
 		self.g_value = 0
+		self.best_neighbour = None
 
 
 def prepare_board(board):
@@ -511,7 +512,7 @@ def white_pieces(board, black_kill, white_locations, black_locations):
 			white_1_goal = black_kill[i][0]
 			white_2_goal = black_kill[i][1]
 
-			optimal1, optimal2, dist = get_min_manhattan_dist()
+			#optimal1, optimal2, dist = get_min_manhattan_dist()
 
 			if dist < min_distance:
 
@@ -550,16 +551,19 @@ def A_star_search(start, goal, state):
 	""" Our first node is the initial state"""
 	root_node = Node()
 
-	root_node.state = start_state
+	root_node.state = start
 	root_node.g_value = 0
-	root_node.f_value = calc_man_dist(goal, state)
+	root_node.f_value = calc_man_dist(goal, start)
+	root_node.children = []
 
 	nodes_to_explore.append(root_node)
 
 	while nodes_to_explore:
 
-		for node, i in enumerate(nodes_to_explore, 0):
-			if not i:
+		for i, node in enumerate(nodes_to_explore, 0):
+			print(node)
+			
+			if i == 0:
 				curr_node = node
 				min_f_value = node.f_value
 
@@ -569,17 +573,17 @@ def A_star_search(start, goal, state):
 
 
 		if curr_node.state == goal:
-			#We want to recreate the sequence
+			sequence.append(curr_node)
 			break
 
 		nodes_searched.append(curr_node)
-		nodes_explored.delete(curr_node)
+		nodes_to_explore.remove(curr_node)
 
 		#Create the children nodes
 		next_moves = []
 
 		for move in buffers:
-			valid = return_valid_move(state, locations, curr.state, move)
+			valid = return_valid_move(state, locations, curr_node.state, move)
 
 			if valid:
 				next_moves.append(valid)
@@ -588,6 +592,7 @@ def A_star_search(start, goal, state):
 			new_child = Node()
 			new_child.state = move
 			new_child.g_value = curr_node.g_value
+			new_child.children = []
 
 			curr_node.children.append(new_child)
 
@@ -601,12 +606,15 @@ def A_star_search(start, goal, state):
 				nodes_to_explore.append(child)
 
 			# confusing line below
+			#print(child.state)
+			#print(curr_node.state)
 			new_score = curr_node.g_value + calc_man_dist(child.state, curr_node.state)
 
 			#also this if statement
 			if new_score < child.g_value:
 
-				sequence.append([curr_node.state,child.state])
+				sequence.append(child)
+				child.best_neighbour = curr_node
 				child.g_value = new_score
 				child.f_value = child.g_value + calc_man_dist(child.state, goal)
 
@@ -627,6 +635,7 @@ def massacre(board, black, white):
 	alive_pieces = black
 	white_location = white
 
+	"""
 	while alive_pieces:
 
 		pieces_to_kill = black_to_kill(state, alive_pieces)
@@ -645,6 +654,9 @@ def massacre(board, black, white):
 		white_location, state = white_move(state, white_location, white2_orig, white2_goal)
 
 		alive_pieces, state = check_state(state, alive_pieces)
+	"""
+
+	test = A_star_search((2,3), (3,5), state)
 
 	return sequence
 
