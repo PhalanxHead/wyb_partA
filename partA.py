@@ -286,6 +286,8 @@ def white_killed(state, new_pos):
 			if (piece_check == "O"):
 				return False
 
+			return True
+
 	elif piece_j == 0 or piece_j == 7:
 		if (state[piece_i + 1][piece_j] == "@") and (state[piece_i - 1][piece_j] == "@") \
 		or (state[piece_i + 1][piece_j] == "X") and (state[piece_i - 1][piece_j] == "@") \
@@ -310,9 +312,9 @@ def white_killed(state, new_pos):
 			if (piece_check == "O"):
 				return False
 
-	else:
+			return True
 
-		print(type(state))
+	else:
 
 		if (state[piece_i][piece_j + 1] == "@") and (state[piece_i][piece_j - 1] == "@") \
 		or (state[piece_i + 1][piece_j] == "@") and (state[piece_i - 1][piece_j] == "@"):
@@ -353,7 +355,9 @@ def white_killed(state, new_pos):
 			if (piece_check == "O"):
 				return False
 
-	return True
+			return True
+
+	return False
 
 def white_move(board, white, original_pos, new_pos):
 	"""
@@ -603,26 +607,24 @@ def A_star_search(start, goal, state):
 		for child in curr_node.children:
 
 			if child.state in nodes_searched:
-				#we don't care about this node
+				"""  Stuff """
 				pass
 
 			elif child.state not in nodes_to_explore:
 				nodes_to_explore.append(child)
 
-			# confusing line below
-			#print(child.state)
-			#print(curr_node.state)
-
-			#also this if statement
-			#print(child.state)
-			if (child.f_value < curr_node.f_value) and white_killed(state, child.state):
+			if (child.f_value < curr_node.f_value) and not white_killed(state, child.state):
 
 				if child in sequence:
 					pass
 
 				sequence.append(child)
+				#sequence.append([curr_node.state, child.state])
 				child.best_neighbour = curr_node
 
+	print(sequence)
+
+	#print(sequence)
 	return sequence, goal_state
 
 def massacre(board, black, white):
@@ -641,7 +643,7 @@ def massacre(board, black, white):
 	white_location = white
 	black_location = black
 
-	"""
+	
 	while alive_pieces:
 
 		pieces_to_kill = black_to_kill(state, alive_pieces)
@@ -660,7 +662,6 @@ def massacre(board, black, white):
 		white_location, state = white_move(state, white_location, white2_orig, white2_goal)
 
 		alive_pieces, state = check_state(state, alive_pieces)
-	"""
 
 	test = A_star_search((1,3), (3,5), state)
 
