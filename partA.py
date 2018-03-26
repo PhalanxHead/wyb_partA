@@ -460,21 +460,23 @@ def black_to_kill(board, black_locations):
 	"""
 	can_kill = []
 
-	for piece in black_locations:
-		piece_i = black_locations[i][0]
-		piece_j = black_locations[i][1]
+	for black in black_locations:
+		piece_i = black[0]
+		piece_j = black[1]
+
+		print(piece_i, piece_j)
 
 		kill = False
 
 		if (piece_i == 0) or (piece_i == 7):
-			if (board[piece_i + 1][piece_j] != "@" and board[piece_i - 1][piece_j] != "@"):
-				kill = [(piece_i + 1, piece_j), (piece_i - 1, piece_j)]
+			if (board[piece_i][piece_j + 1] != "@" and board[piece_i][piece_j - 1] != "@"):
+				kill = [(piece_i, piece_j + 1), (piece_i, piece_j - 1)]
 
 		elif (piece_j == 0) or (piece_j == 7):
-			if (board[piece_i[piece_j + 1]] != "@" and board[piece_i][piece_j - 1] != "@"):
-				kill = [(piece_i, piece_j + 1, (piece_i, piece_j - 1))]
+			if (board[piece_i + 1][piece_j] != "@" and board[piece_i - 1][piece_j] != "@"):
+				kill = [(piece_i + 1, piece_j), (piece_i - 1, piece_j)]
 		else:
-			if (board[piece_i[piece_j + 1]] != "@" and board[piece_i][piece_j - 1] != "@"):
+			if (board[piece_i][piece_j + 1] != "@" and board[piece_i][piece_j - 1] != "@"):
 				kill = [(piece_i, piece_j + 1, (piece_i, piece_j - 1))]
 
 			elif (board[piece_i + 1][piece_j] != "@" and board[piece_i - 1][piece_j] != "@"):
@@ -566,14 +568,14 @@ def A_star_search(start, goal, state):
 				min_f_value = node.f_value
 
 
-		if curr_node.state = goal:
+		if curr_node.state == goal:
 			#We want to recreate the sequence
 			break
 
 		nodes_searched.append(curr_node)
 		nodes_explored.delete(curr_node)
 
-		#Create the children nodes 
+		#Create the children nodes
 		next_moves = []
 
 		for move in buffers:
@@ -598,10 +600,10 @@ def A_star_search(start, goal, state):
 			elif child.state not in nodes_to_explore:
 				nodes_to_explore.append(child)
 
-			# confusing line below 
+			# confusing line below
 			new_score = curr_node.g_value + calc_man_dist(child.state, curr_node.state)
 
-			#also this if statement 
+			#also this if statement
 			if new_score < child.g_value:
 
 				sequence.append([curr_node.state,child.state])
@@ -628,7 +630,7 @@ def massacre(board, black, white):
 	while alive_pieces:
 
 		pieces_to_kill = black_to_kill(state, alive_pieces)
-		white1_orig, white1_goal, white2_orig, white2_goal = white_pieces(pieces_to_kill, state, white_location)
+		white1_orig, white1_goal, white2_orig, white2_goal = white_pieces(pieces_to_kill, state, white_location, None)
 
 		white_1_sequence, state = A_star_search(white1_orig, white1_goal, state)
 		white_2_sequence, state = A_star_search(white2_orig, white2_goal, state)
