@@ -447,7 +447,7 @@ def get_min_manhattan_dist(board, white_locations, winning_pos):
 				elif man_dist < min_dist2[2]:
 					min_dist2 = [piece, pos, man_dist]
 
-	return List(min_dist_1[0], min_dist2[0], min_dist_1[2] + min_dist2[2])
+	return [min_dist1[0], min_dist2[0], min_dist1[2] + min_dist2[2]]
 
 def black_to_kill(board, black_locations):
 	"""
@@ -511,7 +511,7 @@ def white_pieces(board, black_kill, white_locations, black_locations):
 			white_1_goal = black_kill[i][0]
 			white_2_goal = black_kill[i][1]
 
-			optimal1, optimal2, dist = get_min_manhattan_dist()
+			optimal1, optimal2, dist = get_min_manhattan_dist(board, white_locations, gen_winning_positions(board, black_locations))
 
 			if dist < min_distance:
 
@@ -532,7 +532,6 @@ def white_pieces(board, black_kill, white_locations, black_locations):
 
 	In this implementation we are using A* to find the best path for a piece to
 	reach the goal position where it would be able to capture a black piece """
-
 def A_star_search(start, goal, state):
 	goal_state = state
 	buffers = [(1,0),(-1,0),(0,1),(0,-1)]
@@ -626,11 +625,12 @@ def massacre(board, black, white):
 	state = board
 	alive_pieces = black
 	white_location = white
+	black_location = black
 
 	while alive_pieces:
 
 		pieces_to_kill = black_to_kill(state, alive_pieces)
-		white1_orig, white1_goal, white2_orig, white2_goal = white_pieces(pieces_to_kill, state, white_location, None)
+		white1_orig, white1_goal, white2_orig, white2_goal = white_pieces(pieces_to_kill, state, white_location, black_location)
 
 		white_1_sequence, state = A_star_search(white1_orig, white1_goal, state)
 		white_2_sequence, state = A_star_search(white2_orig, white2_goal, state)
