@@ -54,6 +54,7 @@ def massacre(board, black, white):
         white_1_sequence, state = A_star_search(white1_orig, white1_goal, white_locations, state)
 
         if white2_goal:
+            #print("s")
             white_2_sequence, state = A_star_search(white2_orig, white2_goal, white_locations, state)
 
         for i in range(len(white_1_sequence)):
@@ -311,18 +312,15 @@ def A_star_search(start, goal, white_locations, state):
 
     In this implementation we are using A* to find the best path for a piece to
     reach the goal position where it would be able to capture a black piece """
+    test = []
 
     print(start)
-    print(goal)
-    print(white_locations)
-    print_board(state)
+    print(type(goal))
 
     goal_state = state
     buffers = [(1,0),(-1,0),(0,1),(0,-1)]
 
-    goal_state[goal[0]][goal[1]] = "O"
-    goal_state[start[0]][start[1]] = "-"
-
+    
     nodes_to_explore = []
     nodes_searched = []
 
@@ -345,9 +343,12 @@ def A_star_search(start, goal, white_locations, state):
                 curr_node = node
                 min_f_value = node.f_value
 
-            elif min_f_value > node.f_value:
+            elif min_f_value >= node.f_value:
                 curr_node = node
                 min_f_value = node.f_value
+
+            elif node.state == goal:
+                break
 
 
         if curr_node.state == goal:
@@ -362,18 +363,30 @@ def A_star_search(start, goal, white_locations, state):
         for move in buffers:
             valid = return_valid_move(state, white_locations, curr_node.state, move)
 
-            if valid:
+            if valid and not white_killed(state, valid):
                 next_moves.append(valid)
 
-        print(next_moves)
         for move in next_moves:
             new_child = Node()
             new_child.state = move
-            new_child.g_value = curr_node.g_value
+
+            if (curr_node.state[0] > goal[0]) or (curr_node.state[1] > goal[1]):
+                new_child.g_value = ((new_child.state[0] - curr_node.state[0]) + (new_child.state[1] - curr_node.state[1])) 
+
+            elif (curr_node.state[0] < goal[0]) or (curr_node.state[1]  < goal[1]):
+                new_child.g_value = ((curr_node.state[0] - new_child.state[0]) + (curr_node.state[1] - new_child.state[1]))
+            
             new_child.f_value = calc_man_dist(move, goal) + new_child.g_value
             new_child.children = []
 
             curr_node.children.append(new_child)
+
+
+        a = []
+        for child in curr_node.children:
+            a.append(child.state)
+
+        test.append([a, curr_node.state])
 
         for child in curr_node.children:
 
@@ -384,13 +397,8 @@ def A_star_search(start, goal, white_locations, state):
             elif child.state not in nodes_to_explore:
                 nodes_to_explore.append(child)
 
-            # confusing line below
-            #print(child.state)
-            #print(curr_node.state)
 
-            #also this if statement
-            #print(child.state)
-            if (child.f_value < curr_node.f_value) and white_killed(state, child.state):
+            if (child.f_value < curr_node.f_value) and not white_killed(state, child.state):
 
                 child.best_neighbour = curr_node
 
@@ -402,6 +410,11 @@ def A_star_search(start, goal, white_locations, state):
         sequence.append(node.state)
 
     sequence = sequence[::-1]
+
+    print(sequence)
+
+    goal_state[goal[0]][goal[1]] = "O"
+    goal_state[start[0]][start[1]] = "-"
 
     return sequence, goal_state
 
@@ -443,6 +456,8 @@ def white_killed(state, new_pos):
             if (piece_check == "O"):
                 return False
 
+            return True
+
     elif piece_j == 0 or piece_j == 7:
         if (state[piece_i + 1][piece_j] == "@") and (state[piece_i - 1][piece_j] == "@") \
         or (state[piece_i + 1][piece_j] == "X") and (state[piece_i - 1][piece_j] == "@") \
@@ -466,6 +481,8 @@ def white_killed(state, new_pos):
 
             if (piece_check == "O"):
                 return False
+
+            return True
 
     else:
 
@@ -509,7 +526,9 @@ def white_killed(state, new_pos):
             if (piece_check == "O"):
                 return False
 
-    return True
+            return True
+
+    return False
 
 """ ************************************************************************* """
 
