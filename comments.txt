@@ -50,10 +50,25 @@ Therefore, once read in, the complexity of finding all valid moves is:
 
 
 2.2 What search algorithm does your program use?
-    It determines the lowest manhattan distance between white pieces and
+    The search algorithm is only used in the Massacre part of the program.
+    This search algorithm we are using is a modified A* searching algorithm based from the lectures,
+    where the heuristic that is being used is the Mahattan distance heuristic.
+    We chose Manhattan distance as it is a great estimation of the number of moves required to get a piece to its goal and hence killing the black piece.
+
+
 2.3 If applicable, what is the branching factor of your search tree?
+    The branching factor of the search tree is 4, this is because in our search tree we are looking at the possible moves for a given white piece.
+    The maximum number of moves for a given piece at any given time is 4, including jumps. 
+    However the branching factor could decrease with moves being blocked by other pieces, jumps not being available or being at the edges of the board (invalid moves).
+    So we say that for this circumstance we should be seeing a branching factor of 4.
 
 2.4 What is the maximum search depth?
+    As we are using the A* algorithm 
 
 2.5 Does your algorithm always return the shortest possible sequence of moves that will eliminate all enemy pieces?
-    No as some sequences require positions that are in 'taken' positions to jump, which the algorithm won't search for. (probably)
+    No, despite A* being optimal generally, our implementation of A* does not always return the shortest possible sequence of moves.
+    This is because our approach looks at trying to optimise individual piece paths instead of the entire board paths.
+    So if there a white piece already in position and the other white piece had to take 3 steps to get into position to kill the black piece,
+    we would find this as our solution instead of say being able to jump over the black piece with the white piece that was in a kill position,
+    and then move the white piece a shorter distance. So, our algorithm returns the shortest path for a single white sequence given a game state,
+    but it will not give the shortest possible sequence!
