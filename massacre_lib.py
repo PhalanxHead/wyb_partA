@@ -336,10 +336,6 @@ def A_star_search(start, goal, white_locations, state):
             new_child = Node()
             new_child.state = move
 
-            # block below is broke
-
-            ################3
-
             if (curr_node.state[0] > goal[0]) or (curr_node.state[1] > goal[1]):
 
                 new_child.g_value = ((new_child.state[0] - curr_node.state[0]) + (new_child.state[1] - curr_node.state[1]))
@@ -363,10 +359,6 @@ def A_star_search(start, goal, white_locations, state):
 
             value_to_check = curr_node.f_value
             child.best_neighbour = curr_node
-
-            if (child.f_value < value_to_check) and not white_killed(state, child.state):
-
-                child.best_neighbour = curr_node
 
     node = curr_node
     sequence = [curr_node.state]
