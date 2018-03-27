@@ -381,13 +381,6 @@ def A_star_search(start, goal, white_locations, state):
 
             curr_node.children.append(new_child)
 
-
-        a = []
-        for child in curr_node.children:
-            a.append(child.state)
-
-        test.append([a, curr_node.state])
-
         for child in curr_node.children:
 
             if child.state in nodes_searched:
