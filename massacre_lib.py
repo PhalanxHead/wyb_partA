@@ -161,7 +161,10 @@ def white_pieces(board, black_kill, white_locations, black_locations):
                 min_distance = dist
                 black_to_kill = black_locations[i]
                 white1_orig = optimal1
-                white2_orig = optimal2
+                if optimal2 == (9,9):
+                    white2_orig = white2_orig
+                else:
+                    white2_orig = optimal2
 
     return white1_orig, white1_goal, white2_orig, white2_goal
 
@@ -173,55 +176,33 @@ def get_min_manhattan_dist(board, white_locations, winning_pos):
     Returns:                 List(Optimal Piece 1 Location, Optimal Piece 2 Location, Sum of their Manhattan Distances)
     ______________________
     Input Variables:
-        board:                 The board array
-        white_locations:    The location list of all  the white pieces
+        board:               The board array
+        white_locations:     The location list of all  the white pieces
         winning_pos:         The list of all the winning pairs.
     """
 
     """ Just for the sake of initial values"""
-    min_dist1 = [(9,9),(9,9),100]
-    min_dist2 = [(9,9),(9,9),100]
+    piece1 = [(9,9),(9,9),100]
+    piece2 = [(9,9),(9,9),100]
 
-    for piece in white_locations:
-        piece_i = piece[0]
-        piece_j = piece[1]
+    for win_pair in winning_pos:
+        if isinstance(win_pair, list):
 
-        """ The winning positions are formatted kind of annoyingly for this purpose"""
-        for pos_quad in winning_pos:
+            for win_pos in win_pair:
+                for wPiece in white_locations:
+                    local_min_dist = calc_man_dist(win_pos, wPiece)
+                    if local_min_dist < piece1[2]:
+                        piece1 = [wPiece, win_pos, local_min_dist]
+                    elif local_min_dist < piece2[2]:
+                        piece2 = [wPiece, win_pos, local_min_dist]
+        else:
+            for wPiece in white_locations:
+                local_min_dist = calc_man_dist(win_pos, wPiece)
+                if local_min_dist < piece1[2] + piece2[2]:
+                    piece1 = [wPiece, win_pos, local_min_dist]
+                    piece2 = [(9,9), (9,9), 0]
 
-            """ Checking it's not looking at a position tuple """
-            if isinstance(pos_quad, list):
-                for pos_pair in pos_quad:
-
-                    if isinstance(pos_pair, list):
-                        for pos in pos_pair:
-
-                            man_dist = calc_man_dist(piece, pos)
-
-                            if man_dist < min_dist1[2]:
-                                min_dist1 = [piece, pos, man_dist]
-                            elif man_dist < min_dist2[2]:
-                                min_dist2 = [piece, pos, man_dist]
-
-                        """ Must otherwise be a tuple"""
-                    else:
-                        man_dist = calc_man_dist(piece, pos)
-
-                        if man_dist < min_dist1[2]:
-                            min_dist1 = [piece, pos, man_dist]
-                        elif man_dist < min_dist2[2]:
-                            min_dist2 = [piece, pos, man_dist]
-
-                """ Also Must otherwise be a tuple """
-            else:
-                man_dist = calc_man_dist(piece, pos)
-
-                if man_dist < min_dist1[2]:
-                    min_dist1 = [piece, pos, man_dist]
-                elif man_dist < min_dist2[2]:
-                    min_dist2 = [piece, pos, man_dist]
-
-    return [min_dist1[0], min_dist2[0], min_dist1[2] + min_dist2[2]]
+    return [piece1[0], piece2[0], piece1[2] + piece2[2]]
 
 """ ************************************************************************* """
 
@@ -292,14 +273,8 @@ def gen_winning_positions(board, black_locations):
 
                 """ Add each tuple pair to a list"""
                 if len(winning_pair) == 2:
-                    winning_buffer.append(winning_pair)
+                    winning_pos.append(winning_pair)
                     winning_pair = []
-
-                """ Add each list pair to a list"""
-                if len(winning_buffer) == 2:
-                    winning_pos.append(winning_buffer)
-                    winning_pair = []
-                    winning_buffer = []
 
                 """ Reset if something goes wrong """
             except IndexError:
@@ -323,13 +298,10 @@ def A_star_search(start, goal, white_locations, state):
     reach the goal position where it would be able to capture a black piece """
     test = []
 
-    print(start)
-    print(type(goal))
-
     goal_state = state
     buffers = [(1,0),(-1,0),(0,1),(0,-1)]
 
-    
+
     nodes_to_explore = []
     nodes_searched = []
 
@@ -380,11 +352,11 @@ def A_star_search(start, goal, white_locations, state):
             new_child.state = move
 
             if (curr_node.state[0] > goal[0]) or (curr_node.state[1] > goal[1]):
-                new_child.g_value = ((new_child.state[0] - curr_node.state[0]) + (new_child.state[1] - curr_node.state[1])) 
+                new_child.g_value = ((new_child.state[0] - curr_node.state[0]) + (new_child.state[1] - curr_node.state[1]))
 
             elif (curr_node.state[0] < goal[0]) or (curr_node.state[1]  < goal[1]):
                 new_child.g_value = ((curr_node.state[0] - new_child.state[0]) + (curr_node.state[1] - new_child.state[1]))
-            
+
             new_child.f_value = calc_man_dist(move, goal) + new_child.g_value
             new_child.children = []
 
