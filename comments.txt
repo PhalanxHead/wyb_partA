@@ -52,13 +52,13 @@ Therefore, once read in, the complexity of finding all valid moves is:
 2.2 What search algorithm does your program use?
     The search algorithm is only used in the Massacre part of the program.
     This search algorithm we are using is a modified A* searching algorithm based from the lectures,
-    where the heuristic that is being used is the Mahattan distance heuristic.
+    where the heuristic that is being used is the Manhattan distance heuristic.
     We chose Manhattan distance as it is a great estimation of the number of moves required to get a piece to its goal and hence killing the black piece.
 
 
 2.3 If applicable, what is the branching factor of your search tree?
     The branching factor of the search tree is 4, this is because in our search tree we are looking at the possible moves for a given white piece.
-    The maximum number of moves for a given piece at any given time is 4, including jumps. 
+    The maximum number of moves for a given piece at any given time is 4, including jumps.
     However the branching factor could decrease with moves being blocked by other pieces, jumps not being available or being at the edges of the board (invalid moves).
     So we say that for this circumstance we should be seeing a branching factor of 4.
 

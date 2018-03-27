@@ -49,7 +49,11 @@ def massacre(board, black, white):
     while alive_pieces:
 
         pieces_to_kill = gen_winning_positions(state, alive_pieces)
+        print(white_locations)
+        print(pieces_to_kill)
         white1_orig, white1_goal, white2_orig, white2_goal = white_pieces(state, pieces_to_kill, white_locations, black_location)
+
+        print(white1_orig, "->", white1_goal, white2_orig, "->", white2_goal)
 
         white_1_sequence, state = A_star_search(white1_orig, white1_goal, white_locations, state)
         sequence.append(white_1_sequence)
@@ -125,6 +129,7 @@ def white_pieces(board, winning_pos, white_locations, black_locations):
     white2_orig = None
 
     min_distance = INFINITY
+    min_dist_set = False
 
     for i in range(len(winning_pos)):
         if winning_pos[i]:
@@ -132,22 +137,40 @@ def white_pieces(board, winning_pos, white_locations, black_locations):
             if isinstance(winning_pos[i], list):
                 white1_goal = winning_pos[i][0]
                 white2_goal = winning_pos[i][1]
+                print(white1_goal, white2_goal)
             else:
                 white1_goal = winning_pos[i]
                 white2_goal = None
 
+
             winP1, P1Goal, winP2, P2Goal, dist = get_min_manhattan_dist(board, white_locations, winning_pos)
 
+            if not min_dist_set:
+                  min_distance = dist
+                  white1_orig = winP1
+                  white1_goal = P1Goal
+                  min_dist_set = True
+                  if winP2 != (9,9):
+                      white2_goal = P2Goal
+                      white2_orig = winP2
+                  else:
+                      white2_goal = None
+                      white2_orig = None
+                  print(white1_orig, white1_goal, white2_orig, white2_goal, min_distance)
+
             if dist < min_distance:
+                print(dist, min_distance)
                 min_distance = dist
                 white1_orig = winP1
                 white1_goal = P1Goal
+                min_dist_set = True
                 if winP2 != (9,9):
                     white2_goal = P2Goal
                     white2_orig = winP2
                 else:
                     white2_goal = None
                     white2_orig = None
+                print(white1_orig, white1_goal, white2_orig, white2_goal, min_distance)
 
     return white1_orig, white1_goal, white2_orig, white2_goal
 
