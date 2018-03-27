@@ -63,8 +63,10 @@ Therefore, once read in, the complexity of finding all valid moves is:
     So we say that for this circumstance we should be seeing a branching factor of 4.
 
 2.4 What is the maximum search depth?
-    As we are using the A* algorithm
-    - should be the length of the path?
+    As we are using the A* algorithm our maximum depth should be the number of moves it takes us to move from our starting position to our goal position,
+    this should be true each time A* is called. This means that the maximum search depth is dependent on the white piece we are choosing to kill the black piece,
+    if we do not choose well we can end up with a larger search depth than if we chose a more optimal piece (closer to the black piece), as the number of moves would be smaller.
+    We could also say that as the moves are well represented by the Manhattan distance heuristic, that the search depth will approximately be the Manhattan distance from our starting to goal position!
 
 2.5 Does your algorithm always return the shortest possible sequence of moves that will eliminate all enemy pieces?
     No, despite A* being optimal generally, our implementation of A* does not always return the shortest possible sequence of moves.
