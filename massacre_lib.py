@@ -353,7 +353,7 @@ def A_star_search(start, goal, white_locations, state):
         if curr_node.state == goal:
             break
 
-        nodes_searched.append(curr_node)
+        nodes_searched.append(curr_node.state)
         nodes_to_explore.remove(curr_node)
 
         #Create the children nodes
