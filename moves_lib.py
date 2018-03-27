@@ -71,11 +71,13 @@ def return_valid_move(board, locations, piece, move):
     elif position == "O" or position == "@":
 
         try:
-            jump = board[piece_i + move_i*2][piece_j + move_j*2]
+            move_i *=2
+            move_j *=2
+            jump = board[piece_i + move_i][piece_j + move_j]
         except IndexError:
             return False
 
-        if ((piece_i + move_i*2) < 0) or ((piece_j + move_j*2) < 0):
+        if ((piece_i + move_i) < 0) or ((piece_j + move_j) < 0):
             return False
 
         if jump == "-":

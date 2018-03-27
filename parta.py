@@ -55,13 +55,6 @@ def locations(board, player):
 
     return location_array
 
-def print_board(board):
-    boardStr = ""
-    for line in board:
-        for space in line:
-            boardStr = boardStr + space
-    print(boardStr)
-
 """
 ******************** MAIN **************************
 """
