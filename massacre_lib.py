@@ -51,7 +51,16 @@ def massacre(board, black, white):
         pieces_to_kill = gen_winning_positions(state, alive_pieces)
         white1_orig, white1_goal, white2_orig, white2_goal = white_pieces(state, pieces_to_kill, white_locations, black_location)
 
+        print(type(white1_goal))
+        print(type(white2_goal))
+
+        if white2_goal:
+            print(white1_goal[0], white1_goal[1])
+            print(white2_goal[0], white2_goal[1])
+
         white_1_sequence, state = A_star_search(white1_orig, white1_goal, white_locations, state)
+
+
 
         if white2_goal:
             #print("s")
