@@ -27,6 +27,7 @@ class Node():
         self.f_value = 0
         self.g_value = 0
         self.best_neighbour = None
+        self.did_jump = False
 
 """ ************************************************************************* """
 
@@ -59,8 +60,6 @@ def massacre(board, black, white):
             print(white2_goal[0], white2_goal[1])
 
         white_1_sequence, state = A_star_search(white1_orig, white1_goal, white_locations, state)
-
-
 
         if white2_goal:
             #print("s")
@@ -296,11 +295,13 @@ def A_star_search(start, goal, white_locations, state):
 
     In this implementation we are using A* to find the best path for a piece to
     reach the goal position where it would be able to capture a black piece """
+    
+    print_board(state)
+
     test = []
 
     goal_state = state
     buffers = [(1,0),(-1,0),(0,1),(0,-1)]
-
 
     nodes_to_explore = []
     nodes_searched = []
@@ -314,10 +315,12 @@ def A_star_search(start, goal, white_locations, state):
     root_node.g_value = 0
     root_node.f_value = calc_man_dist(goal, start)
     root_node.children = []
+    root_node.did_jump = False
 
     nodes_to_explore.append(root_node)
 
     while nodes_to_explore:
+
         for i, node in enumerate(nodes_to_explore, 0):
 
             if i == 0:
@@ -330,7 +333,6 @@ def A_star_search(start, goal, white_locations, state):
 
             elif node.state == goal:
                 break
-
 
         if curr_node.state == goal:
             break
@@ -347,32 +349,51 @@ def A_star_search(start, goal, white_locations, state):
             if valid and not white_killed(state, valid):
                 next_moves.append(valid)
 
+
+
         for move in next_moves:
             new_child = Node()
             new_child.state = move
 
+            # block below is broke
+
+            ################3
+
             if (curr_node.state[0] > goal[0]) or (curr_node.state[1] > goal[1]):
+
                 new_child.g_value = ((new_child.state[0] - curr_node.state[0]) + (new_child.state[1] - curr_node.state[1]))
 
             elif (curr_node.state[0] < goal[0]) or (curr_node.state[1]  < goal[1]):
                 new_child.g_value = ((curr_node.state[0] - new_child.state[0]) + (curr_node.state[1] - new_child.state[1]))
+
+            if (abs(new_child.g_value) % 2 == 0):
+                new_child.did_jump = True
+
+            else:
+                new_child.did_jump = False
+
+            ######################
 
             new_child.f_value = calc_man_dist(move, goal) + new_child.g_value
             new_child.children = []
 
             curr_node.children.append(new_child)
 
+
+            test.append([next_moves, curr_node.state])
+
         for child in curr_node.children:
 
             if child.state in nodes_searched:
-                #we don't care about this node
                 pass
 
             elif child.state not in nodes_to_explore:
                 nodes_to_explore.append(child)
 
+            value_to_check = curr_node.f_value
+            child.best_neighbour = curr_node
 
-            if (child.f_value < curr_node.f_value) and not white_killed(state, child.state):
+            if (child.f_value < value_to_check) and not white_killed(state, child.state):
 
                 child.best_neighbour = curr_node
 
@@ -380,11 +401,14 @@ def A_star_search(start, goal, white_locations, state):
     sequence = [curr_node.state]
 
     while node.state != start:
+
+        print(node.state)
         node = node.best_neighbour
         sequence.append(node.state)
 
     sequence = sequence[::-1]
 
+    # print(test)
     print(sequence)
 
     goal_state[goal[0]][goal[1]] = "O"
