@@ -108,4 +108,6 @@ elif command.lower() == "massacre":
     #print(final_sequence)
     for sequence in final_sequence:
         for i in range(len(sequence) - 1):
-            print(str(sequence[i]) + " -> " + str(sequence[i+1]))
+            source = sequence[i][::-1]
+            dest = sequence[i+1][::-1]
+            print(str(source) + " -> " + str(dest))
