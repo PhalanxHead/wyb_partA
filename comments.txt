@@ -63,7 +63,8 @@ Therefore, once read in, the complexity of finding all valid moves is:
     So we say that for this circumstance we should be seeing a branching factor of 4.
 
 2.4 What is the maximum search depth?
-    As we are using the A* algorithm 
+    As we are using the A* algorithm
+    - should be the length of the path?
 
 2.5 Does your algorithm always return the shortest possible sequence of moves that will eliminate all enemy pieces?
     No, despite A* being optimal generally, our implementation of A* does not always return the shortest possible sequence of moves.
