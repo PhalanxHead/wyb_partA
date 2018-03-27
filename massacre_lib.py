@@ -52,7 +52,7 @@ def massacre(board, black, white):
         for j in range(len(white_2_sequence)):
             sequence.append(white_2_sequence[j])
 
-        white_locations, state = white_move(state, white_locations, white1_orig, white2_goal)
+        white_locations, state = white_move(state, white_locations, white1_orig, white1_goal)
         white_locations, state = white_move(state, white_locations, white2_orig, white2_goal)
 
         alive_pieces, state = check_state(state, alive_pieces)
@@ -75,8 +75,6 @@ def black_to_kill(board, black_locations):
     for black in black_locations:
         piece_i = black[0]
         piece_j = black[1]
-
-        print(piece_i, piece_j)
 
         kill = False
 
@@ -292,6 +290,7 @@ def A_star_search(start, goal, white_locationss, state):
 
     In this implementation we are using A* to find the best path for a piece to
     reach the goal position where it would be able to capture a black piece """
+
     goal_state = state
     buffers = [(1,0),(-1,0),(0,1),(0,-1)]
 
@@ -314,7 +313,6 @@ def A_star_search(start, goal, white_locationss, state):
     nodes_to_explore.append(root_node)
 
     while nodes_to_explore:
-
         for i, node in enumerate(nodes_to_explore, 0):
 
             if i == 0:
