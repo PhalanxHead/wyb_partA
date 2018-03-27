@@ -106,7 +106,7 @@ def black_to_kill(board, black_locations):
 
 """ ************************************************************************* """
 
-def white_pieces(board, black_kill, white_locations, black_locations):
+def white_pieces(board, winning_pos, white_locations, black_locations):
     """
      Need to pick which black piece to kill based off which black pieces are
     killable in the current game state and the minimum distance between
@@ -116,7 +116,7 @@ def white_pieces(board, black_kill, white_locations, black_locations):
     ________________________
     Input Variables:
         board:                The board array as defined above
-        black_kill:            The list of killable black pieces
+        winning_pos:            The list of killable black pieces
         white_locations:    The list of white piece location tuples.
         black_locations:    The list of black piece location tuples.
     """
@@ -126,28 +126,28 @@ def white_pieces(board, black_kill, white_locations, black_locations):
 
     min_distance = INFINITY
 
-    for i in range(len(black_kill)):
-        if black_kill[i]:
+    for i in range(len(winning_pos)):
+        if winning_pos[i]:
             """ Correct for single-piece taking """
-            if isinstance(black_kill[i], list):
-                white1_goal = black_kill[i][0]
-                white2_goal = black_kill[i][1]
+            if isinstance(winning_pos[i], list):
+                white1_goal = winning_pos[i][0]
+                white2_goal = winning_pos[i][1]
             else:
-                white1_goal = black_kill[i]
+                white1_goal = winning_pos[i]
                 white2_goal = None
 
-            winning_pos = gen_winning_positions(board, black_locations)
-            optimal1, optimal2, dist = get_min_manhattan_dist(board, white_locations, winning_pos)
+            winP1, P1Goal, winP2, P2Goal, dist = get_min_manhattan_dist(board, white_locations, winning_pos)
 
             if dist < min_distance:
-
                 min_distance = dist
-                black_to_kill = black_locations[i]
-                white1_orig = optimal1
-                if optimal2 == (9,9):
-                    white2_orig = white2_orig
+                white1_orig = winP1
+                white1_goal = P1Goal
+                if winP2 != (9,9):
+                    white2_goal = P2Goal
+                    white2_orig = winP2
                 else:
-                    white2_orig = optimal2
+                    white2_goal = None
+                    white2_orig = None
 
     return white1_orig, white1_goal, white2_orig, white2_goal
 
@@ -174,18 +174,18 @@ def get_min_manhattan_dist(board, white_locations, winning_pos):
             for win_pos in win_pair:
                 for wPiece in white_locations:
                     local_min_dist = calc_man_dist(win_pos, wPiece)
-                    if local_min_dist < piece1[2] and board[win_pos[0]][win_pos[1]] == "-":
+                    if local_min_dist < piece1[2]:
                         piece1 = [wPiece, win_pos, local_min_dist]
-                    elif local_min_dist < piece2[2] and board[win_pos[0]][win_pos[1]] == "-":
+                    elif local_min_dist < piece2[2] and wPiece != piece1[0]:
                         piece2 = [wPiece, win_pos, local_min_dist]
         else:
             for wPiece in white_locations:
                 local_min_dist = calc_man_dist(win_pos, wPiece)
-                if local_min_dist < piece1[2] + piece2[2] and board[win_pos[0]][win_pos[1]] == "-":
+                if local_min_dist <= piece1[2] + piece2[2]:
                     piece1 = [wPiece, win_pos, local_min_dist]
                     piece2 = [(9,9), (9,9), 0]
 
-    return [piece1[0], piece2[0], piece1[2] + piece2[2]]
+    return [piece1[0], piece1[1], piece2[0], piece2[1], piece1[2] + piece2[2]]
 
 """ ************************************************************************* """
 
@@ -279,8 +279,6 @@ def A_star_search(start, goal, white_locations, state):
 
     In this implementation we are using A* to find the best path for a piece to
     reach the goal position where it would be able to capture a black piece """
-    
-    #print_board(state)
 
     goal_state = state
     buffers = [(1,0),(-1,0),(0,1),(0,-1)]
@@ -327,10 +325,8 @@ def A_star_search(start, goal, white_locations, state):
         for move in buffers:
             valid = return_valid_move(state, white_locations, curr_node.state, move)
 
-            if valid and not white_killed(state, valid):
+            if valid:
                 next_moves.append(valid)
-
-
 
         for move in next_moves:
             new_child = Node()
