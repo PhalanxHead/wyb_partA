@@ -105,7 +105,7 @@ if command.lower() == "moves":
 elif command.lower() == "massacre":
     final_sequence = massacre(board_as_array, black_locations, white_locations)
 
-    print(final_sequence)
-
-    #for move in final_sequence:
-    #    print(str(move[0]) + " -> " + str(move[1]))
+    #print(final_sequence)
+    for sequence in final_sequence:
+        for i in range(len(sequence) - 1):
+            print(str(sequence[i]) + " -> " + str(sequence[i+1]))
