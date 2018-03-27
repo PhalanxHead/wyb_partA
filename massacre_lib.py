@@ -182,14 +182,14 @@ def get_min_manhattan_dist(board, white_locations, winning_pos):
             for win_pos in win_pair:
                 for wPiece in white_locations:
                     local_min_dist = calc_man_dist(win_pos, wPiece)
-                    if local_min_dist < piece1[2]:
+                    if local_min_dist < piece1[2] and board[win_pos[0]][win_pos[1]] == "-":
                         piece1 = [wPiece, win_pos, local_min_dist]
-                    elif local_min_dist < piece2[2]:
+                    elif local_min_dist < piece2[2] and board[win_pos[0]][win_pos[1]] == "-":
                         piece2 = [wPiece, win_pos, local_min_dist]
         else:
             for wPiece in white_locations:
                 local_min_dist = calc_man_dist(win_pos, wPiece)
-                if local_min_dist < piece1[2] + piece2[2]:
+                if local_min_dist < piece1[2] + piece2[2] and board[win_pos[0]][win_pos[1]] == "-":
                     piece1 = [wPiece, win_pos, local_min_dist]
                     piece2 = [(9,9), (9,9), 0]
 
@@ -375,8 +375,6 @@ def A_star_search(start, goal, white_locations, state):
         sequence.append(node.state)
 
     sequence = sequence[::-1]
-
-    print(sequence)
 
     goal_state[goal[0]][goal[1]] = "O"
     goal_state[start[0]][start[1]] = "-"
