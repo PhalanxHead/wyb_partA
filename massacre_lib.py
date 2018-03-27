@@ -289,16 +289,10 @@ def A_star_search(start, goal, white_locations, state):
     reach the goal position where it would be able to capture a black piece """
     test = []
 
-<<<<<<< HEAD
-    print(start)
-    print(type(goal))
-
-=======
->>>>>>> new_manhattan_dist
     goal_state = state
     buffers = [(1,0),(-1,0),(0,1),(0,-1)]
 
-    
+
     nodes_to_explore = []
     nodes_searched = []
 
@@ -349,11 +343,11 @@ def A_star_search(start, goal, white_locations, state):
             new_child.state = move
 
             if (curr_node.state[0] > goal[0]) or (curr_node.state[1] > goal[1]):
-                new_child.g_value = ((new_child.state[0] - curr_node.state[0]) + (new_child.state[1] - curr_node.state[1])) 
+                new_child.g_value = ((new_child.state[0] - curr_node.state[0]) + (new_child.state[1] - curr_node.state[1]))
 
             elif (curr_node.state[0] < goal[0]) or (curr_node.state[1]  < goal[1]):
                 new_child.g_value = ((curr_node.state[0] - new_child.state[0]) + (curr_node.state[1] - new_child.state[1]))
-            
+
             new_child.f_value = calc_man_dist(move, goal) + new_child.g_value
             new_child.children = []
 
