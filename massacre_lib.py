@@ -259,32 +259,34 @@ def gen_winning_positions(board, black_locations):
     """
     winning_pos = []
     winning_pair = []
-    winning_buffer = []
     buffers = [(1,0), (-1,0), (0,1), (0,-1)]
 
     """ Loop through the black pieces positions and determine how to kill them"""
     for piece in black_locations:
-
+        winning_pair = []
         piece_i = piece[0]
         piece_j = piece[1]
 
         """ Check all of the available killing places"""
-        for killpos in buffers:
+        for i, killpos in enumerate(buffers):
 
             buffer_i = killpos[0]
             buffer_j = killpos[1]
 
             """ Check for corners"""
+
+
+            if i == 2:
+                winning_pair = []
+
             try:
                 if board[piece_i + buffer_i][piece_j + buffer_j] == "X":
                     winning_pair = []
-                    winning_buffer = []
                     winning_pos.append((piece_i - buffer_i, piece_j - buffer_j))
 
                     """ Check for other black pieces"""
                 elif board[piece_i + buffer_i][piece_j + buffer_j] == "@":
                     winning_pair = []
-                    winning_buffer = []
 
                     """ Ignore White pieces in building these sets"""
                 elif board[piece_i + buffer_i][piece_j + buffer_j] in "-O":
@@ -301,8 +303,8 @@ def gen_winning_positions(board, black_locations):
                 """ Reset if something goes wrong """
             except IndexError:
                 winning_pair = []
-                winning_buffer = []
 
+    print(winning_pos)
     return winning_pos
 
 """ ************************************************************************* """
