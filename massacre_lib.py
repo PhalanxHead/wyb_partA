@@ -124,6 +124,8 @@ def white_pieces(board, winning_pos, white_locations, black_locations):
     black_to_kill = None
     white1_orig = None
     white2_orig = None
+    white1_goal = None
+    white2_goal = None
 
     min_distance = INFINITY
     min_dist_set = False
