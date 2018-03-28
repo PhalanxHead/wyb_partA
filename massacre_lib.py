@@ -6,6 +6,7 @@ Amy Rieck and Luke Hedt
 """
 
 from moves_lib import *
+import time
 
 """ Make infinity a really large number """
 INFINITY = 9999999
@@ -49,11 +50,7 @@ def massacre(board, black, white):
     while alive_pieces:
 
         pieces_to_kill = gen_winning_positions(state, alive_pieces)
-        print(white_locations)
-        print(pieces_to_kill)
         white1_orig, white1_goal, white2_orig, white2_goal = white_pieces(state, pieces_to_kill, white_locations, black_location)
-
-        print(white1_orig, "->", white1_goal, white2_orig, "->", white2_goal)
 
         white_1_sequence, state = A_star_search(white1_orig, white1_goal, white_locations, state)
         sequence.append(white_1_sequence)
@@ -133,17 +130,8 @@ def white_pieces(board, winning_pos, white_locations, black_locations):
 
     for i in range(len(winning_pos)):
         if winning_pos[i]:
-            """ Correct for single-piece taking """
-            if isinstance(winning_pos[i], list):
-                white1_goal = winning_pos[i][0]
-                white2_goal = winning_pos[i][1]
-                print(white1_goal, white2_goal)
-            else:
-                white1_goal = winning_pos[i]
-                white2_goal = None
 
-
-            winP1, P1Goal, winP2, P2Goal, dist = get_min_manhattan_dist(board, white_locations, winning_pos)
+            winP1, P1Goal, winP2, P2Goal, dist = return_min_MD_pair(board, white_locations, winning_pos)
 
             if not min_dist_set:
                   min_distance = dist
@@ -156,10 +144,8 @@ def white_pieces(board, winning_pos, white_locations, black_locations):
                   else:
                       white2_goal = None
                       white2_orig = None
-                  print(white1_orig, white1_goal, white2_orig, white2_goal, min_distance)
 
             if dist < min_distance:
-                print(dist, min_distance)
                 min_distance = dist
                 white1_orig = winP1
                 white1_goal = P1Goal
@@ -170,13 +156,12 @@ def white_pieces(board, winning_pos, white_locations, black_locations):
                 else:
                     white2_goal = None
                     white2_orig = None
-                print(white1_orig, white1_goal, white2_orig, white2_goal, min_distance)
 
     return white1_orig, white1_goal, white2_orig, white2_goal
 
 """ ************************************************************************* """
 
-def get_min_manhattan_dist(board, white_locations, winning_pos):
+def return_min_MD_pair(board, white_locations, winning_pos):
     """
     Calculates the manhattan distance between white pieces and current  winning positions.
     Returns:                 List(Optimal Piece 1 Location, Optimal Piece 2 Location, Sum of their Manhattan Distances)
@@ -188,27 +173,56 @@ def get_min_manhattan_dist(board, white_locations, winning_pos):
     """
 
     """ Just for the sake of initial values"""
-    piece1 = [(9,9),(9,9),100]
-    piece2 = [(9,9),(9,9),100]
+    current_min = [[(9,9), (9,9), INFINITY],[(9,9), (9,9), INFINITY]]
 
     for win_pair in winning_pos:
-        if isinstance(win_pair, list):
+        trialPos = [[(9,9), win_pair[0], INFINITY], [(9,9), win_pair[1], INFINITY]]
+        white_locations_temp = white_locations.copy()
 
-            for win_pos in win_pair:
-                for wPiece in white_locations:
-                    local_min_dist = calc_man_dist(win_pos, wPiece)
-                    if local_min_dist < piece1[2]:
-                        piece1 = [wPiece, win_pos, local_min_dist]
-                    elif local_min_dist < piece2[2] and wPiece != piece1[0]:
-                        piece2 = [wPiece, win_pos, local_min_dist]
+        """ Check for the singular tuple """
+        if type(win_pair) is list:
+
+            for i, wPiece in enumerate(win_pair):
+                man_piece, man_dist = get_min_manhat_dist(wPiece, white_locations_temp)
+                if man_dist < trialPos[i][2]:
+                    trialPos[i] = [man_piece, wPiece, man_dist]
+                    white_locations_temp.remove(man_piece)
+
         else:
-            for wPiece in white_locations:
-                local_min_dist = calc_man_dist(win_pos, wPiece)
-                if local_min_dist <= piece1[2] + piece2[2]:
-                    piece1 = [wPiece, win_pos, local_min_dist]
-                    piece2 = [(9,9), (9,9), 0]
+            man_piece, man_dist = get_min_manhat_dist(win_pair, white_locations_temp)
+            if man_dist < trialPos[0][2]:
+                trialPos[0] = [man_piece, win_pair, man_dist]
+                trialPos[1] = [(9,9), (9,9), 0]
 
-    return [piece1[0], piece1[1], piece2[0], piece2[1], piece1[2] + piece2[2]]
+        if trialPos[0][2] + trialPos[1][2] <  current_min[0][2] + current_min[1][2]:
+            current_min = trialPos
+
+    return [current_min[0][0], current_min[0][1], current_min[1][0], current_min[1][1], current_min[0][2] + current_min[1][2]]
+
+""" ************************************************************************* """
+
+def get_min_manhat_dist(win_pos, white_locations):
+    """
+    Calculates the minimum manhattan distance between a winning position and the list of white pieces
+    Returns:                 min_piece (The closest white piece),
+                             min_dist (The distance from the winning pos)
+    ______________________
+    Input Variables:
+        win_pos:            The winning position as (row, col)
+        white_locations     The list of white piece postions
+    """
+
+    """ Just for the sake of initial values"""
+    min_piece = (9,9)
+    min_dist = INFINITY
+
+    for white_loc in white_locations:
+        local_min_dist = calc_man_dist(win_pos, white_loc)
+        if local_min_dist < min_dist:
+            min_piece = white_loc
+            min_dist = local_min_dist
+
+    return min_piece, min_dist
 
 """ ************************************************************************* """
 
@@ -322,7 +336,6 @@ def A_star_search(start, goal, white_locations, state):
     nodes_to_explore.append(root_node)
 
     while nodes_to_explore:
-
         for i, node in enumerate(nodes_to_explore, 0):
 
             if i == 0:
@@ -333,7 +346,7 @@ def A_star_search(start, goal, white_locations, state):
                 curr_node = node
                 min_f_value = node.f_value
 
-            elif node.state == goal:
+            elif curr_node.state == goal:
                 break
 
         if curr_node.state == goal:
