@@ -127,6 +127,8 @@ def white_pieces(board, winning_pos, white_locations, black_locations):
     black_to_kill = None
     white1_orig = None
     white2_orig = None
+    white1_goal = None
+    white2_goal = None
 
     min_distance = INFINITY
     min_dist_set = False
@@ -134,7 +136,7 @@ def white_pieces(board, winning_pos, white_locations, black_locations):
     for i in range(len(winning_pos)):
         if winning_pos[i]:
             """ Correct for single-piece taking """
-            if isinstance(winning_pos[i], list):
+            if isinstance(winning_pos[i], list): # Problem here resetting for no reason
                 white1_goal = winning_pos[i][0]
                 white2_goal = winning_pos[i][1]
                 print(white1_goal, white2_goal)
@@ -144,6 +146,7 @@ def white_pieces(board, winning_pos, white_locations, black_locations):
 
 
             winP1, P1Goal, winP2, P2Goal, dist = get_min_manhattan_dist(board, white_locations, winning_pos)
+            print(dist)
 
             if not min_dist_set:
                   min_distance = dist
@@ -170,7 +173,7 @@ def white_pieces(board, winning_pos, white_locations, black_locations):
                 else:
                     white2_goal = None
                     white2_orig = None
-                print(white1_orig, white1_goal, white2_orig, white2_goal, min_distance)
+            print(white1_orig, white1_goal, white2_orig, white2_goal, min_distance)
 
     return white1_orig, white1_goal, white2_orig, white2_goal
 
