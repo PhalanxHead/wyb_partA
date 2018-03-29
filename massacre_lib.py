@@ -6,19 +6,9 @@ Amy Rieck and Luke Hedt
 """
 
 from moves_lib import *
-import time
 
 """ Make infinity a really large number """
 INFINITY = 9999999
-
-def print_board(board):
-    boardStr = ""
-    for line in board:
-        for space in line:
-            boardStr = boardStr + space
-
-        boardStr += "\n"
-    print(boardStr)
 
 """ Defining our node that will be used within our A* search algorithm"""
 class Node():
@@ -47,14 +37,15 @@ def massacre(board, black, white):
     white_locations = white
     black_location = black
 
+    """ Try to kill black pieces while they're still on the board """
     while alive_pieces:
-
         pieces_to_kill = gen_winning_positions(state, alive_pieces)
         white1_orig, white1_goal, white2_orig, white2_goal = white_pieces(state, pieces_to_kill, white_locations, black_location)
 
         white_1_sequence, state = A_star_search(white1_orig, white1_goal, white_locations, state)
         sequence.append(white_1_sequence)
 
+        """ White 2 doesn't need to move if the black piece is next to an X """
         if white2_goal:
             white_2_sequence, state = A_star_search(white2_orig, white2_goal, white_locations, state)
             sequence.append(white_2_sequence)
@@ -70,94 +61,61 @@ def massacre(board, black, white):
 
 """ ************************************************************************* """
 
-def black_to_kill(board, black_locations):
-    """
-    Generates a list of the black pieces that can be killed using the current board state.
-    Returns:                List(Killable Black pieces)
-    ________________________
-    Input Variables:
-        board:                The board array as defined above
-        black_locations:    The list of black location tuples
-    """
-    can_kill = []
-
-    for black in black_locations:
-        piece_i = black[0]
-        piece_j = black[1]
-
-        kill = False
-
-        if (piece_i == 0) or (piece_i == 7):
-            if (board[piece_i][piece_j + 1] != "@" and board[piece_i][piece_j - 1] != "@"):
-                kill = [(piece_i, piece_j + 1), (piece_i, piece_j - 1)]
-
-        elif (piece_j == 0) or (piece_j == 7):
-            if (board[piece_i + 1][piece_j] != "@" and board[piece_i - 1][piece_j] != "@"):
-                kill = [(piece_i + 1, piece_j), (piece_i - 1, piece_j)]
-        else:
-            if (board[piece_i][piece_j + 1] != "@" and board[piece_i][piece_j - 1] != "@"):
-                kill = [(piece_i, piece_j + 1), (piece_i, piece_j - 1)]
-
-            elif (board[piece_i + 1][piece_j] != "@" and board[piece_i - 1][piece_j] != "@"):
-                kill = [(piece_i + 1, piece_j), (piece_i - 1, piece_j)]
-
-        can_kill.append(kill)
-
-    return can_kill
-
-""" ************************************************************************* """
-
 def white_pieces(board, winning_pos, white_locations, black_locations):
     """
-     Need to pick which black piece to kill based off which black pieces are
+    Need to pick which black piece to kill based off which black pieces are
     killable in the current game state and the minimum distance between
     white pieces and the said black piece. Black piece with the closest white
     pieces is selected.
-    Returns:                Tuple()
+    Returns:                Tuple(White1_Loc, White1_Goal, White2_Loc, White2_Goal)
     ________________________
     Input Variables:
-        board:                The board array as defined above
-        winning_pos:            The list of killable black pieces
+        board:              The board array as defined above
+        winning_pos:        The list of pairs of positions where a black
+                            piece can be killed.
         white_locations:    The list of white piece location tuples.
         black_locations:    The list of black piece location tuples.
     """
-    black_to_kill = None
+
     white1_orig = None
     white2_orig = None
     white1_goal = None
     white2_goal = None
 
     min_distance = INFINITY
+    """ Flag for initialising values """
     min_dist_set = False
 
-    for i in range(len(winning_pos)):
-        if winning_pos[i]:
+    """ Search through all of the pairs for the minimum distance between a
+        White and Black pair. """
+    for pair in winning_pos:
 
-            winP1, P1Goal, winP2, P2Goal, dist = return_min_MD_pair(board, white_locations, winning_pos)
+        winP1, P1Goal, winP2, P2Goal, dist = return_min_MD_pair(board, white_locations, winning_pos)
 
-            if not min_dist_set:
-                  min_distance = dist
-                  white1_orig = winP1
-                  white1_goal = P1Goal
-                  min_dist_set = True
-                  if winP2 != (9,9):
-                      white2_goal = P2Goal
-                      white2_orig = winP2
-                  else:
-                      white2_goal = None
-                      white2_orig = None
+        """ Check the flag to see if values have been set. """
+        if not min_dist_set:
+              min_distance = dist
+              white1_orig = winP1
+              white1_goal = P1Goal
+              min_dist_set = True
+              if winP2 != (9,9):
+                  white2_goal = P2Goal
+                  white2_orig = winP2
+              else:
+                  white2_goal = None
+                  white2_orig = None
 
-            if dist < min_distance:
-                min_distance = dist
-                white1_orig = winP1
-                white1_goal = P1Goal
-                min_dist_set = True
-                if winP2 != (9,9):
-                    white2_goal = P2Goal
-                    white2_orig = winP2
-                else:
-                    white2_goal = None
-                    white2_orig = None
+        if dist < min_distance:
+            min_distance = dist
+            white1_orig = winP1
+            white1_goal = P1Goal
+            min_dist_set = True
+            if winP2 != (9,9):
+                white2_goal = P2Goal
+                white2_orig = winP2
+            else:
+                white2_goal = None
+                white2_orig = None
 
     return white1_orig, white1_goal, white2_orig, white2_goal
 
@@ -165,8 +123,10 @@ def white_pieces(board, winning_pos, white_locations, black_locations):
 
 def return_min_MD_pair(board, white_locations, winning_pos):
     """
-    Calculates the manhattan distance between white pieces and current  winning positions.
-    Returns:                 List(Optimal Piece 1 Location, Optimal Piece 2 Location, Sum of their Manhattan Distances)
+    Calculates the manhattan distance between The closest white pieces and the
+    black piece they're klling.
+    Returns:                 List(Current White1 Location, White 1 Goal, Current White 2 Location,
+                                    White 2 Goal, Their Combined Manhattan Distance)
     ______________________
     Input Variables:
         board:               The board array
@@ -174,28 +134,35 @@ def return_min_MD_pair(board, white_locations, winning_pos):
         winning_pos:         The list of all the winning pairs.
     """
 
-    """ Just for the sake of initial values"""
+    """ Just for the sake of initial values.
+        Note min_pair = [piece1, piece2], where
+             piece = [Source, Dest, Manhattan Dist]"""
     current_min = [[(9,9), (9,9), INFINITY],[(9,9), (9,9), INFINITY]]
 
+    """ Trial all of the pairs """
     for win_pair in winning_pos:
         trialPos = [[(9,9), win_pair[0], INFINITY], [(9,9), win_pair[1], INFINITY]]
         white_locations_temp = white_locations.copy()
 
-        """ Check for the singular tuple """
+        """ Check for the singular tuple (For a black piece next to an X) """
         if type(win_pair) is list:
 
+            """ Search through each position in the pair """
             for i, wPiece in enumerate(win_pair):
+                """ Find the lowest distance between the winning pos and a white piece """
                 man_piece, man_dist = get_min_manhat_dist(wPiece, white_locations_temp)
-                if man_dist < trialPos[i][2]:
-                    trialPos[i] = [man_piece, wPiece, man_dist]
-                    white_locations_temp.remove(man_piece)
+                trialPos[i] = [man_piece, wPiece, man_dist]
+                """ Remove the white piece from the list se we don't choose it again """
+                white_locations_temp.remove(man_piece)
 
         else:
             man_piece, man_dist = get_min_manhat_dist(win_pair, white_locations_temp)
-            if man_dist < trialPos[0][2]:
-                trialPos[0] = [man_piece, win_pair, man_dist]
-                trialPos[1] = [(9,9), (9,9), 0]
+            trialPos[0] = [man_piece, win_pair, man_dist]
+            """ Make sure if only one piece needs to be moved, the distance has no
+                effect on which pair is chosen and that the position is out of range """
+            trialPos[1] = [(9,9), (9,9), 0]
 
+        """ Reset lowest distance pair if it has a lower combined distance """
         if trialPos[0][2] + trialPos[1][2] <  current_min[0][2] + current_min[1][2]:
             current_min = trialPos
 
@@ -206,18 +173,21 @@ def return_min_MD_pair(board, white_locations, winning_pos):
 def get_min_manhat_dist(win_pos, white_locations):
     """
     Calculates the minimum manhattan distance between a winning position and the list of white pieces
-    Returns:                 min_piece (The closest white piece),
-                             min_dist (The distance from the winning pos)
+    Returns:
+       min_piece:           The closest white piece
+       min_dist:            The distance from the winning pos
     ______________________
     Input Variables:
         win_pos:            The winning position as (row, col)
-        white_locations     The list of white piece postions
+        white_locations:    The list of white piece postions
     """
 
     """ Just for the sake of initial values"""
     min_piece = (9,9)
     min_dist = INFINITY
 
+    """ Search through all the white pieces, work out how far away it is.
+        If it's closer than the current min, reset the minimum values"""
     for white_loc in white_locations:
         local_min_dist = calc_man_dist(win_pos, white_loc)
         if local_min_dist < min_dist:
@@ -231,7 +201,7 @@ def get_min_manhat_dist(win_pos, white_locations):
 def calc_man_dist(piece, pos):
     """
     Calcuates the manhattan distance between 2 positions
-    Returns:        int(Manhattan Distance, (abs(x) + abs(y)))
+    Returns:        int(Manhattan Distance, (|x1 - x2| + |y1 - y2|))
     __________________________
     Input Variabes:
         pos1:         First (row, col) tuple
@@ -251,10 +221,10 @@ def calc_man_dist(piece, pos):
 def gen_winning_positions(board, black_locations):
     """
     Generates a list of the winning positions in the game
-    Returns:                [[Position Pair], (Single Pos)]
+    Returns:                [[Position Pair], <(Single Pos)>]
     ________________________
     Input Variables:
-        board:                 The board array
+        board:               The board array
         black_locations:     The list of the locations of black pieces
     """
     winning_pos = []
@@ -273,22 +243,21 @@ def gen_winning_positions(board, black_locations):
             buffer_i = killpos[0]
             buffer_j = killpos[1]
 
-            """ Check for corners"""
-
-
+            """ Clear the pair buffer if one of the positions in the first pair was invalid """
             if i == 2:
                 winning_pair = []
 
             try:
+                """ Check for corner pieces """
                 if board[piece_i + buffer_i][piece_j + buffer_j] == "X":
                     winning_pair = []
                     winning_pos.append((piece_i - buffer_i, piece_j - buffer_j))
 
-                    """ Check for other black pieces"""
+                    """ Check for other black pieces """
                 elif board[piece_i + buffer_i][piece_j + buffer_j] == "@":
                     winning_pair = []
 
-                    """ Ignore White pieces in building these sets"""
+                    """ Ignore the presence of white pieces when building these sets """
                 elif board[piece_i + buffer_i][piece_j + buffer_j] in "-O":
                     winning_pair.append((piece_i + buffer_i, piece_j + buffer_j))
 
@@ -304,7 +273,6 @@ def gen_winning_positions(board, black_locations):
             except IndexError:
                 winning_pair = []
 
-    print(winning_pos)
     return winning_pos
 
 """ ************************************************************************* """
@@ -319,9 +287,21 @@ def A_star_search(start, goal, white_locations, state):
             f(n) = h(n) + g(n)
 
     In this implementation we are using A* to find the best path for a piece to
-    reach the goal position where it would be able to capture a black piece """
+    reach the goal position where it would be able to capture a black piece
+
+    Returns:
+        sequence:           The sequence of moves that A* took
+        goal_state:         The board after A* finishes moving
+    ________________________
+    Input Variables:
+        start:              The startng position of the white piece
+        goal:               The goal position of the white piece
+        white_locations:    The list of White Locations
+        state:              The board array
+    """
 
     goal_state = state
+    """ List of available moves to a piece """
     buffers = [(1,0),(-1,0),(0,1),(0,-1)]
 
     nodes_to_explore = []
@@ -339,27 +319,31 @@ def A_star_search(start, goal, white_locations, state):
 
     nodes_to_explore.append(root_node)
 
+    """ Don't end until the goal has been found """
     while nodes_to_explore:
         for i, node in enumerate(nodes_to_explore, 0):
 
+            """ Initialising the minimum values """
             if i == 0:
                 curr_node = node
                 min_f_value = node.f_value
 
-            elif min_f_value >= node.f_value:
+            elif node.f_value <= min_f_value:
                 curr_node = node
                 min_f_value = node.f_value
 
             elif curr_node.state == goal:
                 break
 
+        """ Stop when the goal is reached """
         if curr_node.state == goal:
             break
 
+        """ Mark node as searched """
         nodes_searched.append(curr_node.state)
         nodes_to_explore.remove(curr_node)
 
-        #Create the children nodes
+        """ Create the children nodes, if the nodes are valid """
         next_moves = []
 
         for move in buffers:
@@ -368,6 +352,7 @@ def A_star_search(start, goal, white_locations, state):
             if valid:
                 next_moves.append(valid)
 
+        """ Cycle through the next moves and determine the best move based on manhattan dist """
         for move in next_moves:
             new_child = Node()
             new_child.state = move
@@ -385,6 +370,7 @@ def A_star_search(start, goal, white_locations, state):
 
             curr_node.children.append(new_child)
 
+        """ Loop through the child nodes and add them to the 'to be explored' list """
         for child in curr_node.children:
 
             if child.state in nodes_searched:
@@ -393,19 +379,23 @@ def A_star_search(start, goal, white_locations, state):
             elif child.state not in nodes_to_explore:
                 nodes_to_explore.append(child)
 
+            """ Set best neighbour for retracing the sequence """
             value_to_check = curr_node.f_value
             child.best_neighbour = curr_node
 
     node = curr_node
     sequence = [curr_node.state]
 
+    """ Trace the sequence back from the goal state through the best neighbours """
     while node.state != start:
 
         node = node.best_neighbour
         sequence.append(node.state)
 
+    """ Reverse the sequence """
     sequence = sequence[::-1]
 
+    """ Mutate the board """
     goal_state[goal[0]][goal[1]] = "O"
     goal_state[start[0]][start[1]] = "-"
 
@@ -419,7 +409,7 @@ def white_killed(state, new_pos):
     Returns:        True if white could be killed.
     ________________________
     Input Variables:
-        state:        The Board Array as defined above
+        state:      The Board Array as defined above
         new_pos:    The position white is trying to move to.
     """
     piece_i = new_pos[0]
@@ -532,9 +522,9 @@ def white_move(board, white, original_pos, new_pos):
     Returns:            Tuple(List(White Locations), New Board)
     ________________________
     Input Variables:
-        board:            The board array as defined above
-        white:            The list of white locations
-        original_pos:    The original position of the white piece
+        board:          The board array as defined above
+        white:          The list of white locations
+        original_pos:   The original position of the white piece
         new_pos:        The position to move the piece to
     """
     white_pieces = white
@@ -557,8 +547,8 @@ def check_state(board, black):
     Returns:        Tuple(Alive Black Locations, The Board Array)
     ________________________
     Input Variables:
-        board:        The Board Array as defined above.
-        black:        The list of black locations.
+        board:       The Board Array as defined above.
+        black:       The list of black locations.
     """
     alive = black
     state = board
